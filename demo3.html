@@ -35,7 +35,7 @@
       color: #333;
     }
 
-    /* NYTT: Kategorilänkar */
+    /* Kategorilänkar */
     .categories {
       display: flex;
       justify-content: center;
@@ -59,7 +59,7 @@
     }
 
     .categories a.active {
-      background: #28a745; /* markerar aktuell kategori */
+      background: #28a745; /* markerar aktiv kategori */
     }
 
     .video {
@@ -84,28 +84,56 @@
 
     <h1>Instruktionsfilmer</h1>
 
-    <!-- NYTT: Underkategorier -->
+    <!-- Kategorilänkar -->
     <nav class="categories">
-      <a href="index.html" class="active">Alla</a>
-      <a href="Tekniker.html">Tekniker</a>
-      <a href="Ekonomi.html">Ekonomi</a>
-      <a href="Admin.html">Admin</a>
+      <a href="#" class="active">Alla</a>
+      <a href="#">Tekniker</a>
+      <a href="#">Ekonomi</a>
+      <a href="#">Admin</a>
     </nav>
 
-    <div class="video">
+    <!-- Videor med data-category -->
+    <div class="video" data-category="Tekniker">
       <h2>Rensa cachad metadata i SF Field Service</h2>
       <iframe src="https://www.youtube.com/embed/F8XBwAMkSzY" allowfullscreen title="Rensa cachad metadata i SF Field Service"></iframe>
     </div>
 
-    <div class="video">
+    <div class="video" data-category="Tekniker">
       <h2>Ominstallation App för Salesforce & Field Service</h2>
       <iframe src="https://www.youtube.com/embed/sjHgx7GUAlY" allowfullscreen title="Ominstallation App för Salesforce & Field Service"></iframe>
     </div>
 
-    <div class="video">
+    <div class="video" data-category="Admin">
       <h2>Byt lösenord Salesforce</h2>
       <iframe src="https://www.youtube.com/embed/_6KcA5QC56g" allowfullscreen title="Byt lösenord Salesforce"></iframe>
     </div>
+
   </div>
+
+  <!-- JavaScript för filtrering -->
+  <script>
+    const links = document.querySelectorAll('.categories a');
+    const videos = document.querySelectorAll('.video');
+
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const category = link.textContent;
+
+        // Markera aktiv kategori
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        // Visa/dölj videor
+        videos.forEach(video => {
+          if(category === 'Alla' || video.dataset.category === category){
+            video.style.display = 'block';
+          } else {
+            video.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
 </body>
 </html>

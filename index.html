@@ -14,7 +14,6 @@
       align-items: flex-start;
       min-height: 100vh;
     }
-
     .container {
       background: #fff;
       padding: 2rem 1rem;
@@ -25,83 +24,48 @@
       margin: 2rem;
       text-align: center;
     }
-
     .logo {
       max-width: 400px;
       height: auto;
       margin-bottom: 1rem;
     }
-
     h1 {
       margin-top: 0.5rem;
       margin-bottom: 1rem;
       color: #333;
     }
-
-    /* Kategorilänkar */
     .categories {
       display: flex;
       justify-content: center;
       gap: 1rem;
       margin-bottom: 2rem;
       flex-wrap: wrap;
-      touch-action: manipulation; /* bättre touchrespons */
+      touch-action: manipulation;
     }
-
     .categories a {
       background: #007BFF;
       color: #fff;
       text-decoration: none;
-      padding: 0.75rem 1.5rem; /* större klickyta */
+      padding: 0.75rem 1.5rem;
       border-radius: 10px;
       font-weight: bold;
-      font-size: 1.1rem; /* större text */
+      font-size: 1.1rem;
       transition: background 0.3s;
     }
-
-    .categories a:hover {
-      background: #0056b3;
-    }
-
-    .categories a.active {
-      background: #28a745; /* markerar aktiv kategori */
-    }
-
-    /* Videor */
-    .video {
-      margin-bottom: 2.5rem;
-    }
-
-    iframe {
-      width: 100%;
-      aspect-ratio: 16/9;
-      border-radius: 12px;
-      border: none;
-    }
-
-    h2 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      color: #444;
-    }
-
-    /* Fullbredd på små skärmar */
+    .categories a:hover { background: #0056b3; }
+    .categories a.active { background: #28a745; }
+    .video { margin-bottom: 2.5rem; }
+    iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
+    h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
     @media (max-width: 500px) {
-      .categories a {
-        flex: 1 1 100%;
-        text-align: center;
-        padding: 1rem 0;
-      }
+      .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="logga.png" alt="Företagslogga" class="logo">
-
     <h1>Instruktionsfilmer</h1>
-
-    <!-- Kategorilänkar -->
     <nav class="categories">
       <a href="#" class="active">Alla</a>
       <a href="#">Tekniker</a>
@@ -109,7 +73,6 @@
       <a href="#">Admin</a>
     </nav>
 
-    <!-- Videor med data-category -->
     <div class="video" data-category="Tekniker">
       <h2>Rensa cachad metadata i SF Field Service</h2>
       <iframe src="https://www.youtube.com/embed/F8XBwAMkSzY" allowfullscreen title="Rensa cachad metadata i SF Field Service"></iframe>
@@ -120,33 +83,24 @@
       <iframe src="https://www.youtube.com/embed/sjHgx7GUAlY" allowfullscreen title="Ominstallation App för Salesforce & Field Service"></iframe>
     </div>
 
-    <div class="video" data-category="Admin">
+    <div class="video" data-category="Admin Tekniker">
       <h2>Byt lösenord Salesforce</h2>
       <iframe src="https://www.youtube.com/embed/_6KcA5QC56g" allowfullscreen title="Byt lösenord Salesforce"></iframe>
     </div>
   </div>
 
-  <!-- JavaScript för filtrering -->
   <script>
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
-
     links.forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();
         const category = link.textContent;
-
-        // Markera aktiv kategori
         links.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
-
-        // Visa/dölj videor
         videos.forEach(video => {
-          if(category === 'Alla' || video.dataset.category === category){
-            video.style.display = 'block';
-          } else {
-            video.style.display = 'none';
-          }
+          const cats = video.dataset.category.split(' ');
+          video.style.display = (category==='Alla'||cats.includes(category)) ? 'block' : 'none';
         });
       });
     });

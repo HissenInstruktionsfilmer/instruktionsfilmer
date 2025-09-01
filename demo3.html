@@ -14,6 +14,7 @@
       align-items: flex-start;
       min-height: 100vh;
     }
+
     .container {
       background: #fff;
       padding: 2rem 1rem;
@@ -24,11 +25,13 @@
       margin: 2rem;
       text-align: center;
     }
+
     .logo {
       max-width: 400px;
       height: auto;
       margin-bottom: 1rem;
     }
+
     h1 {
       margin-top: 0.5rem;
       margin-bottom: 1rem;
@@ -42,15 +45,17 @@
       gap: 1rem;
       margin-bottom: 2rem;
       flex-wrap: wrap;
+      touch-action: manipulation; /* bättre touchrespons */
     }
 
     .categories a {
       background: #007BFF;
       color: #fff;
       text-decoration: none;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
+      padding: 0.75rem 1.5rem; /* större klickyta */
+      border-radius: 10px;
       font-weight: bold;
+      font-size: 1.1rem; /* större text */
       transition: background 0.3s;
     }
 
@@ -62,19 +67,31 @@
       background: #28a745; /* markerar aktiv kategori */
     }
 
+    /* Videor */
     .video {
       margin-bottom: 2.5rem;
     }
+
     iframe {
       width: 100%;
       aspect-ratio: 16/9;
       border-radius: 12px;
       border: none;
     }
+
     h2 {
       font-size: 1.2rem;
       margin-bottom: 0.5rem;
       color: #444;
+    }
+
+    /* Fullbredd på små skärmar */
+    @media (max-width: 500px) {
+      .categories a {
+        flex: 1 1 100%;
+        text-align: center;
+        padding: 1rem 0;
+      }
     }
   </style>
 </head>
@@ -107,7 +124,6 @@
       <h2>Byt lösenord Salesforce</h2>
       <iframe src="https://www.youtube.com/embed/_6KcA5QC56g" allowfullscreen title="Byt lösenord Salesforce"></iframe>
     </div>
-
   </div>
 
   <!-- JavaScript för filtrering -->

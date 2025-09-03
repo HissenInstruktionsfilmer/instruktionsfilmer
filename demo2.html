@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Instruktionsfilmer</title>
   <link rel="icon" href="favicon.ico">
   <style>
@@ -21,12 +21,12 @@
       padding: 2rem 1rem;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 95%;          /* ändra från 100% + max-width */
       max-width: 900px;
-      margin: 2rem auto;   /* centrerar och ger lite topp/botten-marginal */
+      width: 100%;
+      margin: 2rem auto;
       text-align: center;
+      box-sizing: border-box;
     }
-
     .logo {
       max-width: 400px;
       height: auto;
@@ -40,12 +40,13 @@
     #search {
       width: 100%;
       max-width: 400px;
-      padding: 0.75rem 1rem;
+      padding: 12px 16px;
       margin: 0 auto 1.5rem auto;
       border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 16px;   /* <-- fixar zoom-buggen */
+      font-size: 17px;
       display: block;
+      box-sizing: border-box;
     }
     .categories {
       display: flex;
@@ -77,12 +78,6 @@
     h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
     @media (max-width: 500px) {
       .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
-    }
-    #no-results {
-      display: none;
-      font-size: 1.1rem;
-      color: #777;
-      margin-top: 2rem;
     }
   </style>
 </head>
@@ -119,15 +114,12 @@
       <h2>Tidsrapportering</h2>
       <iframe src="https://www.youtube.com/embed/UbFHVYDjNAg" allowfullscreen title="Tidsrapportering"></iframe>
     </div>
-
-    <p id="no-results">Inga filmer hittades.</p>
   </div>
 
   <script>
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
-    const noResults = document.getElementById('no-results');
 
     links.forEach(link => {
       link.addEventListener('click', e => {
@@ -145,22 +137,13 @@
     });
 
     function filterVideos(category, searchText) {
-      let visibleCount = 0;
       videos.forEach(video => {
         const cats = video.dataset.category.split(' ');
         const title = video.querySelector('h2').textContent.toLowerCase();
-        const matchesCategory = (category === 'Alla' || cats.includes(category));
-        const matchesSearch = title.includes(searchText);
-        const show = matchesCategory && matchesSearch;
+        const show = (category === 'Alla' || cats.includes(category)) && title.includes(searchText);
         video.style.display = show ? 'block' : 'none';
-        if (show) visibleCount++;
       });
-      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
   </script>
 </body>
 </html>
-
-
-
-

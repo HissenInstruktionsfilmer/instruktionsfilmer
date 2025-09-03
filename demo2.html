@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Instruktionsfilmer</title>
+  <link rel="icon" href="favicon.ico">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -31,45 +32,129 @@
     }
     h1 {
       margin-top: 0.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       color: #333;
     }
-    .video {
-      margin-bottom: 2.5rem;
-    }
-    iframe {
+    #search {
       width: 100%;
-      aspect-ratio: 16/9;
-      border-radius: 12px;
-      border: none;
+      max-width: 400px;
+      padding: 0.75rem 1rem;
+      margin: 0 auto 1.5rem auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      display: block;
     }
-    h2 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      color: #444;
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+      touch-action: manipulation;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      padding: 0.5rem;
+      z-index: 100;
+    }
+    .categories a {
+      background: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: background 0.3s;
+    }
+    .categories a:hover { background: #0056b3; }
+    .categories a.active { background: #28a745; }
+    .video { margin-bottom: 2.5rem; }
+    iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
+    h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+    @media (max-width: 500px) {
+      .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
+    }
+    #no-results {
+      display: none;
+      font-size: 1.1rem;
+      color: #777;
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <img src="logga.png" alt="Företagslogga" class="logo">
-
     <h1>Instruktionsfilmer</h1>
 
-    <div class="video">
+    <input type="text" id="search" placeholder="Sök efter film..." />
+
+    <nav class="categories">
+      <a href="#" class="active">Alla</a>
+      <a href="#">Tekniker</a>
+      <a href="#">Ekonomi</a>
+      <a href="#">Admin</a>
+    </nav>
+
+    <div class="video" data-category="Tekniker">
       <h2>Rensa cachad metadata i SF Field Service</h2>
       <iframe src="https://www.youtube.com/embed/F8XBwAMkSzY" allowfullscreen title="Rensa cachad metadata i SF Field Service"></iframe>
     </div>
 
-    <div class="video">
+    <div class="video" data-category="Tekniker">
       <h2>Ominstallation App för Salesforce & Field Service</h2>
       <iframe src="https://www.youtube.com/embed/sjHgx7GUAlY" allowfullscreen title="Ominstallation App för Salesforce & Field Service"></iframe>
     </div>
 
-    <div class="video">
+    <div class="video" data-category="Admin Tekniker">
       <h2>Byt lösenord Salesforce</h2>
       <iframe src="https://www.youtube.com/embed/_6KcA5QC56g" allowfullscreen title="Byt lösenord Salesforce"></iframe>
     </div>
+    
+    <div class="video" data-category="Tekniker">
+      <h2>Tidsrapportering</h2>
+      <iframe src="https://www.youtube.com/embed/UbFHVYDjNAg" allowfullscreen title="Tidsrapportering"></iframe>
+    </div>
+
+    <p id="no-results">Inga filmer hittades.</p>
   </div>
+
+  <script>
+    const links = document.querySelectorAll('.categories a');
+    const videos = document.querySelectorAll('.video');
+    const search = document.getElementById('search');
+    const noResults = document.getElementById('no-results');
+
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const category = link.textContent;
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        filterVideos(category, search.value.toLowerCase());
+      });
+    });
+
+    search.addEventListener('input', () => {
+      const activeCategory = document.querySelector('.categories a.active').textContent;
+      filterVideos(activeCategory, search.value.toLowerCase());
+    });
+
+    function filterVideos(category, searchText) {
+      let visibleCount = 0;
+      videos.forEach(video => {
+        const cats = video.dataset.category.split(' ');
+        const title = video.querySelector('h2').textContent.toLowerCase();
+        const matchesCategory = (category === 'Alla' || cats.includes(category));
+        const matchesSearch = title.includes(searchText);
+        const show = matchesCategory && matchesSearch;
+        video.style.display = show ? 'block' : 'none';
+        if (show) visibleCount++;
+      });
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+  </script>
 </body>
 </html>

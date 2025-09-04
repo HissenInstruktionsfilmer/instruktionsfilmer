@@ -16,9 +16,7 @@
       align-items: flex-start;
       min-height: 100vh;
     }
-
     .container {
-      position: relative; 
       background: #fff;
       padding: 2rem 1rem;
       border-radius: 12px;
@@ -28,139 +26,52 @@
       margin: 2rem;
       text-align: center;
     }
-
     .logo {
       max-width: 300px;
       height: auto;
       margin-bottom: 1rem;
     }
+    h1 { margin-top: 0.5rem; margin-bottom: 1rem; color: #333; }
 
-    h1 {
-      margin-top: 0.5rem;
-      margin-bottom: 1rem;
-      color: #333;
-    }
+    .search-wrapper { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.5rem 0; display: flex; justify-content: center; }
+    #search { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
 
-    #last-updated {
-      font-size: 0.9rem;
-      color: #555;
-      margin: 0 0 1rem 0;
-    }
-
-    /* Sticky sökfält direkt under rubriken */
-    .search-wrapper {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: #fff;
-      padding: 0.5rem 0;
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    #search {
-      width: 100%;
-      max-width: 400px;
-      padding: 0.75rem 1rem;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 16px;
-      box-sizing: border-box;
-    }
-
-    .categories {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin: 1.5rem 0;
-      flex-wrap: wrap;
-      touch-action: manipulation;
-      background: #fff;
-      padding: 0.5rem;
-    }
-
-    .categories a {
-      background: #007BFF;
-      color: #fff;
-      text-decoration: none;
-      padding: 0.75rem 1.5rem;
-      border-radius: 10px;
-      font-weight: bold;
-      font-size: 1.1rem;
-      transition: background 0.3s;
-    }
-
+    .categories { display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; touch-action: manipulation; background: #fff; padding: 0.5rem; }
+    .categories a { background: #007BFF; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: bold; font-size: 1.1rem; transition: background 0.3s; }
     .categories a:hover { background: #0056b3; }
     .categories a.active { background: #28a745; }
 
-    @media (min-width: 768px) {
-      .categories {
-        position: sticky;
-        top: 60px;
-        z-index: 99;
-      }
-    }
-
+    @media (min-width: 768px) { .categories { position: sticky; top: 60px; z-index: 99; } }
     .video { margin-bottom: 2.5rem; }
     iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
     h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
 
-    @media (max-width: 500px) {
-      .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
-      .logo { max-width: 200px; }
-    }
+    @media (max-width: 500px) { .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; } .logo { max-width: 200px; } }
 
-    #no-results {
-      display: none;
-      font-size: 1.1rem;
-      color: #777;
-      margin-top: 2rem;
-    }
+    #no-results { display: none; font-size: 1.1rem; color: #777; margin-top: 2rem; }
+    #last-updated { display: block; text-align: center; font-size: 0.9rem; color: #555; margin: 1rem auto 0 auto; }
 
-    /* Förslagsformulär */
-    #suggestion {
-      margin-top: 2rem;
-      text-align: center;
-    }
-
-    #suggestion input {
-      width: 80%;
-      max-width: 400px;
-      padding: 0.5rem;
-      margin-bottom: 0.5rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-
-    #suggestion button {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border: none;
-      border-radius: 6px;
-      background-color: #28a745;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    #suggestion button:hover {
-      background-color: #218838;
-    }
+    /* Förslag-formulär */
+    #suggestion-form { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
+    #suggestion-input { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
+    #send-suggestion { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: #28a745; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+    #send-suggestion:hover { background: #218838; }
 
   </style>
+  <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script type="text/javascript">
+    (function(){
+        emailjs.init("86Xo_kJFJ5nr-AGLL"); // Public Key
+    })();
+  </script>
 </head>
 <body>
-
   <div class="container">
-    <!-- Senast uppdaterad -->
     <p id="last-updated"></p>
 
     <img src="logga.png" alt="Företagslogga" class="logo">
     <h1>Instruktionsfilmer</h1>
 
-    <!-- Sticky sökfält -->
     <div class="search-wrapper">
       <input type="text" id="search" placeholder="Sök efter film...">
     </div>
@@ -194,19 +105,20 @@
 
     <p id="no-results">Inga filmer hittades.</p>
 
-    <!-- Förslagsformulär -->
-    <div id="suggestion">
-      <h3>Har du ett förslag på en instruktionsvideo?</h3>
-      <input type="text" id="suggestion-input" placeholder="Skriv ditt förslag här..." />
+    <!-- Formulär för förslag -->
+    <div id="suggestion-form">
+      <input type="text" id="suggestion-input" placeholder="Skriv ditt förslag här">
       <button id="send-suggestion">Skicka förslag</button>
     </div>
 
   </div>
 
   <script>
+    // Senast uppdaterad
     document.getElementById("last-updated").textContent =
       "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
+    // Filtrering av videor
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
@@ -241,18 +153,22 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // Skicka förslag via mailto
-    const sendBtn = document.getElementById('send-suggestion');
-    sendBtn.addEventListener('click', () => {
+    // EmailJS - skicka förslag
+    document.getElementById('send-suggestion').addEventListener('click', function() {
       const suggestion = document.getElementById('suggestion-input').value.trim();
-      if (suggestion) {
-        const mailtoLink = `mailto:hissenforslaginstruktionsfilme@gmail.com?subject=Förslag på instruktionsvideo&body=${encodeURIComponent(suggestion)}`;
-        window.location.href = mailtoLink;
+      if(suggestion){
+          emailjs.send('service_ke92itt', 'template_341abdv', { suggestion: suggestion })
+          .then(function() {
+              alert('Förslaget skickat!');
+              document.getElementById('suggestion-input').value = '';
+          }, function(error) {
+              alert('Något gick fel, försök igen.');
+              console.log(error);
+          });
       } else {
-        alert('Skriv in ditt förslag innan du skickar.');
+          alert('Skriv in ditt förslag innan du skickar.');
       }
     });
-
   </script>
 </body>
 </html>

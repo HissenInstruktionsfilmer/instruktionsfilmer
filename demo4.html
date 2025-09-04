@@ -126,7 +126,7 @@
     }
     #send-suggestion:hover { background: #218838; }
 
-    /* Snygg modern toast */
+    /* Snygg modern toast högst upp */
     #toast {
       visibility: hidden;
       min-width: 250px;
@@ -140,8 +140,8 @@
       position: fixed;
       z-index: 1000;
       left: 50%;
-      bottom: 30px;
-      transform: translateX(-50%) translateY(0);
+      top: 20px; /* placerad högst upp */
+      transform: translateX(-50%) translateY(-20px);
       font-size: 1rem;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       opacity: 0;
@@ -253,11 +253,11 @@
       toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
       toast.style.visibility = 'visible';
       toast.style.opacity = '1';
-      toast.style.transform = 'translateX(-50%) translateY(-20px)'; // flyg uppåt
+      toast.style.transform = 'translateX(-50%) translateY(0)'; // flyg ner från toppen
 
       setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transform = 'translateX(-50%) translateY(0)'; // tillbaka ner
+        toast.style.transform = 'translateX(-50%) translateY(-20px)'; // tillbaka upp
         setTimeout(() => toast.style.visibility = 'hidden', 500);
       }, 3000);
     }

@@ -12,12 +12,13 @@
       margin: 0;
       padding: 0;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      justify-content: center;
+      align-items: flex-start;
       min-height: 100vh;
     }
 
     .container {
+      position: relative; /* Viktigt för sticky-element */
       background: #fff;
       padding: 2rem 1rem;
       border-radius: 12px;
@@ -40,16 +41,23 @@
       color: #333;
     }
 
+    #last-updated {
+      font-size: 0.9rem;
+      color: #555;
+      margin: 0 0 1rem 0;
+    }
+
+    /* Sticky sökfält */
     .search-wrapper {
       position: sticky;
       top: 0;
       z-index: 100;
       background: #fff;
       padding: 0.5rem 0;
-      width: 100%;
       display: flex;
       justify-content: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 1rem;
     }
 
     #search {
@@ -111,27 +119,21 @@
       margin-top: 2rem;
     }
 
-    #last-updated {
-      font-size: 0.9rem;
-      color: #555;
-      margin: 0 0 1rem 0;
-    }
-
   </style>
 </head>
 <body>
 
-  <!-- Sticky sökfält utanför containern -->
-  <div class="search-wrapper">
-    <input type="text" id="search" placeholder="Sök efter film...">
-  </div>
-
   <div class="container">
-    <!-- Senast uppdaterad inuti containern -->
+    <!-- Senast uppdaterad -->
     <p id="last-updated"></p>
 
     <img src="logga.png" alt="Företagslogga" class="logo">
     <h1>Instruktionsfilmer</h1>
+
+    <!-- Sticky sökfält direkt under rubriken -->
+    <div class="search-wrapper">
+      <input type="text" id="search" placeholder="Sök efter film...">
+    </div>
 
     <nav class="categories">
       <a href="#" class="active">Alla</a>

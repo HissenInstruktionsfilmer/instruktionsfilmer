@@ -107,10 +107,11 @@
 
   </div>
 
-  <!-- EmailJS -->
-  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script>
-    emailjs.init("86Xo_kJFJ5nr-AGLL"); // Din Public Key
+  <!-- EmailJS v4 -->
+  <script type="module">
+    import emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+
+    emailjs.init('86Xo_kJFJ5nr-AGLL'); // Din Public Key
 
     // Senast uppdaterad
     document.getElementById("last-updated").textContent =
@@ -151,22 +152,22 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // EmailJS - skicka förslag
-    document.getElementById('send-suggestion').addEventListener('click', function() {
+    // Skicka förslag med EmailJS v4
+    document.getElementById('send-suggestion').addEventListener('click', () => {
       const suggestion = document.getElementById('suggestion-input').value.trim();
-      if(suggestion){
-          emailjs.send('service_ke92itt', 'template_341abdv', { suggestion: suggestion })
-          .then(function() {
-              alert('Förslaget skickat!');
-              document.getElementById('suggestion-input').value = '';
-          }, function(error) {
-              alert('Något gick fel, försök igen.');
-              console.log(error);
-          });
-      } else {
-          alert('Skriv in ditt förslag innan du skickar.');
-      }
+      if(!suggestion) { alert('Skriv in ditt förslag innan du skickar.'); return; }
+
+      emailjs.send('service_ke92itt', 'template_341abdv', { suggestion })
+        .then(() => {
+          alert('Förslaget skickat!');
+          document.getElementById('suggestion-input').value = '';
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('Något gick fel, försök igen.');
+        });
     });
+
   </script>
 </body>
 </html>

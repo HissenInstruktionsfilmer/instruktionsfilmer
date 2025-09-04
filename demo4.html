@@ -288,4 +288,20 @@
 
       // Temporärt ändra knapptext
       const originalText = sendBtn.textContent;
-      sendBtn.textContent = 'Skickat
+      sendBtn.textContent = 'Skickat!';
+      sendBtn.disabled = true;
+      setTimeout(() => {
+        sendBtn.textContent = originalText;
+        sendBtn.disabled = false;
+      }, 3000);
+
+      // Uppdatera räknare
+      sendData.count++;
+      sendData.date = today;
+      localStorage.setItem('sendData', JSON.stringify(sendData));
+
+      suggestionInput.value = '';
+    });
+  </script>
+</body>
+</html>

@@ -41,20 +41,18 @@
     @media (max-width: 500px) { .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; } .logo { max-width: 200px; } }
     #no-results { display: none; font-size: 1.1rem; color: #777; margin-top: 2rem; }
     #last-updated { display: block; text-align: center; font-size: 0.9rem; color: #555; margin: 1rem auto 0 auto; }
-
     /* Förslag-formulär */
     #suggestion-form { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
     #suggestion-input { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
     #send-suggestion { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: #28a745; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
     #send-suggestion:hover { background: #218838; }
   </style>
-
-  <!-- EmailJS -->
-  <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
-  <script type="text/javascript">
-    (function(){
-        emailjs.init("86Xo_kJFJ5nr-AGLL"); // Din Public Key
-    })();
+  
+  <!-- Ny EmailJS SDK -->
+  <script type="module">
+    import emailjs from 'https://cdn.emailjs.com/dist/email.min.mjs';
+    emailjs.init("86Xo_kJFJ5nr-AGLL"); // Din Public Key
+    window.emailjs = emailjs; // Gör globalt så vi kan använda i inline-script
   </script>
 </head>
 <body>
@@ -76,22 +74,22 @@
 
     <div class="video" data-category="Tekniker">
       <h2>Rensa cachad metadata i SF Field Service</h2>
-      <iframe src="https://www.youtube.com/embed/F8XBwAMkSzY" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/F8XBwAMkSzY" allowfullscreen title="Rensa cachad metadata i SF Field Service"></iframe>
     </div>
 
     <div class="video" data-category="Tekniker">
       <h2>Ominstallation App för Salesforce & Field Service</h2>
-      <iframe src="https://www.youtube.com/embed/sjHgx7GUAlY" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/sjHgx7GUAlY" allowfullscreen title="Ominstallation App för Salesforce & Field Service"></iframe>
     </div>
 
     <div class="video" data-category="Admin Tekniker">
       <h2>Byt lösenord Salesforce</h2>
-      <iframe src="https://www.youtube.com/embed/_6KcA5QC56g" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/_6KcA5QC56g" allowfullscreen title="Byt lösenord Salesforce"></iframe>
     </div>
     
     <div class="video" data-category="Tekniker">
       <h2>Tidsrapportering</h2>
-      <iframe src="https://www.youtube.com/embed/UbFHVYDjNAg" allowfullscreen></iframe>
+      <iframe src="https://www.youtube.com/embed/UbFHVYDjNAg" allowfullscreen title="Tidsrapportering"></iframe>
     </div>
 
     <p id="no-results">Inga filmer hittades.</p>
@@ -144,16 +142,16 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // EmailJS - skicka förslag med loggning
+    // EmailJS - skicka förslag
     document.getElementById('send-suggestion').addEventListener('click', function() {
       const suggestion = document.getElementById('suggestion-input').value.trim();
       if(suggestion){
           emailjs.send('service_ke92itt', 'template_341abdv', { suggestion: suggestion })
-          .then(function(response) {
+          .then((response) => {
               console.log('SUCCESS!', response.status, response.text);
               alert('Förslaget skickat!');
               document.getElementById('suggestion-input').value = '';
-          }, function(error) {
+          }, (error) => {
               console.error('FAILED...', error);
               alert('Något gick fel, försök igen.');
           });

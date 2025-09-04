@@ -140,7 +140,7 @@
       position: fixed;
       z-index: 1000;
       left: 50%;
-      top: 20px; /* placerad högst upp */
+      top: 20px; 
       transform: translateX(-50%) translateY(-20px);
       font-size: 1rem;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
@@ -201,14 +201,11 @@
 
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
-    // Initiera EmailJS
     emailjs.init('86Xo_kJFJ5nr-AGLL');
 
-    // Senast uppdaterad
     document.getElementById("last-updated").textContent =
       "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
-    // Filtrering av videor
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
@@ -243,7 +240,7 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // Toast-notifikation
+    // Toast
     const toast = document.getElementById('toast');
     const sendBtn = document.getElementById('send-suggestion');
     const suggestionInput = document.getElementById('suggestion-input');
@@ -253,28 +250,42 @@
       toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
       toast.style.visibility = 'visible';
       toast.style.opacity = '1';
-      toast.style.transform = 'translateX(-50%) translateY(0)'; // flyg ner från toppen
+      toast.style.transform = 'translateX(-50%) translateY(0)';
 
       setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.transform = 'translateX(-50%) translateY(-20px)'; // tillbaka upp
+        toast.style.transform = 'translateX(-50%) translateY(-20px)';
         setTimeout(() => toast.style.visibility = 'hidden', 500);
       }, 3000);
     }
 
-    // --- MOCK för testning: EmailJS anrop pausat ---
+    // --- Mock EmailJS med max 3 skick per dag ---
+    const MAX_SENDS = 3;
+    const today = new Date().toISOString().split('T')[0]; // yyyy-mm-dd
+    let sendData = JSON.parse(localStorage.getItem('sendData')) || { date: today, count: 0 };
+
+    // Återställ räknare om det är ny dag
+    if (sendData.date !== today) {
+      sendData = { date: today, count: 0 };
+      localStorage.setItem('sendData', JSON.stringify(sendData));
+    }
+
     sendBtn.addEventListener('click', () => {
-      const suggestion = suggestionInput.value.trim();
-      if (!suggestion) { 
-        showToast('Skriv in ditt förslag innan du skickar.', false); 
-        return; 
+      if (sendData.count >= MAX_SENDS) {
+        showToast('Du har nått max antal förslag idag.', false);
+        return;
       }
 
-      // Mock: inga mail skickas, bara toast
+      const suggestion = suggestionInput.value.trim();
+      if (!suggestion) {
+        showToast('Skriv in ditt förslag innan du skickar.', false);
+        return;
+      }
+
+      // MOCK: inga mail skickas
       console.log('Mock send:', suggestion);
       showToast('Tack! Förslaget skickades.');
-      suggestionInput.value = '';
-    });
-  </script>
-</body>
-</html>
+
+      // Temporärt ändra knapptext
+      const originalText = sendBtn.textContent;
+      sendBtn.textContent = 'Skickat

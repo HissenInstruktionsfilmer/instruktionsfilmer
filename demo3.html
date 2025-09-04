@@ -26,11 +26,7 @@
       margin: 2rem;
       text-align: center;
     }
-    .logo {
-      max-width: 300px;
-      height: auto;
-      margin-bottom: 1rem;
-    }
+    .logo { max-width: 300px; height: auto; margin-bottom: 1rem; }
     h1 { margin-top: 0.5rem; margin-bottom: 1rem; color: #333; }
 
     .search-wrapper { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.5rem 0; display: flex; justify-content: center; }
@@ -104,14 +100,13 @@
       <input type="text" id="suggestion-input" placeholder="Skriv ditt förslag här">
       <button id="send-suggestion">Skicka förslag</button>
     </div>
-
   </div>
 
-  <!-- EmailJS v4 -->
+  <!-- EmailJS v4 via CDN -->
   <script type="module">
-    import emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+    import * as emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
 
-    emailjs.init('86Xo_kJFJ5nr-AGLL'); // Din Public Key
+    emailjs.init('86Xo_kJFJ5nr-AGLL'); // Public Key
 
     // Senast uppdaterad
     document.getElementById("last-updated").textContent =
@@ -155,7 +150,10 @@
     // Skicka förslag med EmailJS v4
     document.getElementById('send-suggestion').addEventListener('click', () => {
       const suggestion = document.getElementById('suggestion-input').value.trim();
-      if(!suggestion) { alert('Skriv in ditt förslag innan du skickar.'); return; }
+      if (!suggestion) { 
+        alert('Skriv in ditt förslag innan du skickar.'); 
+        return; 
+      }
 
       emailjs.send('service_ke92itt', 'template_341abdv', { suggestion })
         .then(() => {

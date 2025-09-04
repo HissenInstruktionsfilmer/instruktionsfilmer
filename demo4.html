@@ -126,23 +126,27 @@
     }
     #send-suggestion:hover { background: #218838; }
 
-    /* Toast */
+    /* Snygg modern toast */
     #toast {
       visibility: hidden;
       min-width: 250px;
-      margin-left: -125px;
+      max-width: 90%;
+      margin: 0 auto;
       background-color: #28a745;
       color: #fff;
       text-align: center;
-      border-radius: 8px;
-      padding: 1rem;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
       position: fixed;
       z-index: 1000;
       left: 50%;
       bottom: 30px;
+      transform: translateX(-50%) translateY(0);
       font-size: 1rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
       opacity: 0;
-      transition: opacity 0.5s, bottom 0.5s;
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      pointer-events: none;
     }
   </style>
 </head>
@@ -249,10 +253,11 @@
       toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
       toast.style.visibility = 'visible';
       toast.style.opacity = '1';
-      toast.style.bottom = '50px';
+      toast.style.transform = 'translateX(-50%) translateY(-20px)'; // flyg uppåt
+
       setTimeout(() => {
         toast.style.opacity = '0';
-        toast.style.bottom = '30px';
+        toast.style.transform = 'translateX(-50%) translateY(0)'; // tillbaka ner
         setTimeout(() => toast.style.visibility = 'hidden', 500);
       }, 3000);
     }
@@ -265,7 +270,7 @@
         return; 
       }
 
-      // Logga och visa toast utan att skicka mail
+      // Mock: inga mail skickas, bara toast
       console.log('Mock send:', suggestion);
       showToast('Tack! Förslaget skickades.');
       suggestionInput.value = '';

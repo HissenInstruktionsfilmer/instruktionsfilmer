@@ -26,7 +26,11 @@
       margin: 2rem;
       text-align: center;
     }
-    .logo { max-width: 300px; height: auto; margin-bottom: 1rem; }
+    .logo {
+      max-width: 300px;
+      height: auto;
+      margin-bottom: 1rem;
+    }
     h1 { margin-top: 0.5rem; margin-bottom: 1rem; color: #333; }
 
     .search-wrapper { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.5rem 0; display: flex; justify-content: center; }
@@ -38,7 +42,6 @@
     .categories a.active { background: #28a745; }
 
     @media (min-width: 768px) { .categories { position: sticky; top: 60px; z-index: 99; } }
-
     .video { margin-bottom: 2.5rem; }
     iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
     h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
@@ -59,6 +62,7 @@
 <body>
   <div class="container">
     <p id="last-updated"></p>
+
     <img src="logga.png" alt="Företagslogga" class="logo">
     <h1>Instruktionsfilmer</h1>
 
@@ -103,10 +107,10 @@
 
   </div>
 
-  <!-- Ny EmailJS SDK med module -->
-  <script type="module">
-    import emailjs from 'https://cdn.emailjs.com/dist/email.min.mjs';
-    emailjs.init("86Xo_kJFJ5nr-AGLL"); // Public Key
+  <!-- EmailJS -->
+  <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+  <script>
+    emailjs.init("86Xo_kJFJ5nr-AGLL"); // Din Public Key
 
     // Senast uppdaterad
     document.getElementById("last-updated").textContent =
@@ -148,27 +152,21 @@
     }
 
     // EmailJS - skicka förslag
-    const sendBtn = document.getElementById('send-suggestion');
-    const suggestionInput = document.getElementById('suggestion-input');
-
-    sendBtn.addEventListener('click', () => {
-      const suggestion = suggestionInput.value.trim();
-      if(!suggestion) {
-        alert('Skriv in ditt förslag innan du skickar.');
-        return;
+    document.getElementById('send-suggestion').addEventListener('click', function() {
+      const suggestion = document.getElementById('suggestion-input').value.trim();
+      if(suggestion){
+          emailjs.send('service_ke92itt', 'template_341abdv', { suggestion: suggestion })
+          .then(function() {
+              alert('Förslaget skickat!');
+              document.getElementById('suggestion-input').value = '';
+          }, function(error) {
+              alert('Något gick fel, försök igen.');
+              console.log(error);
+          });
+      } else {
+          alert('Skriv in ditt förslag innan du skickar.');
       }
-
-      emailjs.send('service_ke92itt', 'template_341abdv', { suggestion })
-        .then(response => {
-          console.log('SUCCESS!', response.status, response.text);
-          alert('Förslaget skickat!');
-          suggestionInput.value = '';
-        }, error => {
-          console.error('FAILED...', error);
-          alert('Något gick fel, försök igen.');
-        });
     });
-
   </script>
 </body>
 </html>

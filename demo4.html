@@ -126,7 +126,7 @@
     }
     #send-suggestion:hover { background: #218838; }
 
-    /* Snygg modern toast högst upp */
+    /* Toast högst upp */
     #toast {
       visibility: hidden;
       min-width: 250px;
@@ -140,7 +140,7 @@
       position: fixed;
       z-index: 1000;
       left: 50%;
-      top: 20px; 
+      top: 20px;
       transform: translateX(-50%) translateY(-20px);
       font-size: 1rem;
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
@@ -196,11 +196,10 @@
     </div>
   </div>
 
-  <!-- Toast-notifikation -->
   <div id="toast"></div>
 
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-  <script>
+  <script type="module">
+    import emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
     emailjs.init('86Xo_kJFJ5nr-AGLL');
 
     document.getElementById("last-updated").textContent =
@@ -240,7 +239,6 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // Toast
     const toast = document.getElementById('toast');
     const sendBtn = document.getElementById('send-suggestion');
     const suggestionInput = document.getElementById('suggestion-input');
@@ -259,12 +257,10 @@
       }, 3000);
     }
 
-    // --- Mock EmailJS med max 3 skick per dag ---
+    // --- Max 3 skick per dag ---
     const MAX_SENDS = 3;
-    const today = new Date().toISOString().split('T')[0]; // yyyy-mm-dd
+    const today = new Date().toISOString().split('T')[0];
     let sendData = JSON.parse(localStorage.getItem('sendData')) || { date: today, count: 0 };
-
-    // Återställ räknare om det är ny dag
     if (sendData.date !== today) {
       sendData = { date: today, count: 0 };
       localStorage.setItem('sendData', JSON.stringify(sendData));
@@ -282,25 +278,33 @@
         return;
       }
 
-      // MOCK: inga mail skickas
-      console.log('Mock send:', suggestion);
-      showToast('Tack! Förslaget skickades.');
+      const userAgent = navigator.userAgent;
+      const screenSize = `${window.screen.width}x${window.screen.height}`;
 
-      // Temporärt ändra knapptext
-      const originalText = sendBtn.textContent;
-      sendBtn.textContent = 'Skickat!';
-      sendBtn.disabled = true;
-      setTimeout(() => {
-        sendBtn.textContent = originalText;
-        sendBtn.disabled = false;
-      }, 3000);
+      emailjs.send('service_ke92itt', 'template_341abdv', {
+        suggestion: suggestion,
+        userAgent: userAgent,
+        screenSize: screenSize
+      }).then(() => {
+        showToast('Tack! Förslaget skickades.');
 
-      // Uppdatera räknare
-      sendData.count++;
-      sendData.date = today;
-      localStorage.setItem('sendData', JSON.stringify(sendData));
+        const originalText = sendBtn.textContent;
+        sendBtn.textContent = 'Skickat!';
+        sendBtn.disabled = true;
+        setTimeout(() => {
+          sendBtn.textContent = originalText;
+          sendBtn.disabled = false;
+        }, 3000);
 
-      suggestionInput.value = '';
+        sendData.count++;
+        sendData.date = today;
+        localStorage.setItem('sendData', JSON.stringify(sendData));
+
+        suggestionInput.value = '';
+      }).catch(err => {
+        console.error(err);
+        showToast('Något gick fel, försök igen.', false);
+      });
     });
   </script>
 </body>

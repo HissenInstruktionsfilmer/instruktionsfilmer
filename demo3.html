@@ -246,7 +246,7 @@
     sendBtn.addEventListener('click', () => {
       const suggestion = document.getElementById('suggestion-input').value.trim();
       if (suggestion) {
-        const mailtoLink = `mailto:dinemail@foretag.se?subject=Förslag på instruktionsvideo&body=${encodeURIComponent(suggestion)}`;
+        const mailtoLink = `mailto:hissenforslaginstruktionsfilme@gmail.com?subject=Förslag på instruktionsvideo&body=${encodeURIComponent(suggestion)}`;
         window.location.href = mailtoLink;
       } else {
         alert('Skriv in ditt förslag innan du skickar.');
@@ -256,4 +256,3 @@
   </script>
 </body>
 </html>
-

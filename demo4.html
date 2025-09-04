@@ -126,27 +126,26 @@
     }
     #send-suggestion:hover { background: #218838; }
 
-    /* Toast högst upp */
-    #toast {
-      visibility: hidden;
-      min-width: 250px;
-      max-width: 90%;
-      margin: 0 auto;
-      background-color: #28a745;
-      color: #fff;
-      text-align: center;
-      border-radius: 12px;
-      padding: 1rem 1.5rem;
+    /* Toast */
+    .toast {
       position: fixed;
-      z-index: 1000;
-      left: 50%;
       top: 20px;
-      transform: translateX(-50%) translateY(-20px);
-      font-size: 1rem;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #28a745;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       opacity: 0;
-      transition: opacity 0.5s ease, transform 0.5s ease;
       pointer-events: none;
+      transition: opacity 0.4s, transform 0.4s;
+      z-index: 2000;
+    }
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
     }
   </style>
 </head>
@@ -196,15 +195,18 @@
     </div>
   </div>
 
-  <div id="toast"></div>
+  <div id="toast" class="toast">Förslaget skickat!</div>
 
-  <script type="module">
-    import emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-    emailjs.init('86Xo_kJFJ5nr-AGLL'); // Public Key
+  <!-- EmailJS script (fungerande version) -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    emailjs.init("86Xo_kJFJ5nr-AGLL");
 
+    // Senast uppdaterad
     document.getElementById("last-updated").textContent =
       "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
+    // Filtrering av videor
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
@@ -239,71 +241,63 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    const toast = document.getElementById('toast');
-    const sendBtn = document.getElementById('send-suggestion');
-    const suggestionInput = document.getElementById('suggestion-input');
+    // Max 3 förslag per dag
+    const MAX_PER_DAY = 3;
+    function canSendToday() {
+      const today = new Date().toISOString().split('T')[0];
+      const stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
+      if (stored.date !== today) {
+        localStorage.setItem("suggestionLimit", JSON.stringify({ date: today, count: 0 }));
+        return true;
+      }
+      return stored.count < MAX_PER_DAY;
+    }
+    function incrementCount() {
+      const today = new Date().toISOString().split('T')[0];
+      const stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
+      const newCount = (stored.date === today ? stored.count : 0) + 1;
+      localStorage.setItem("suggestionLimit", JSON.stringify({ date: today, count: newCount }));
+    }
 
+    // Toast
     function showToast(message, success = true) {
+      const toast = document.getElementById("toast");
       toast.textContent = message;
-      toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
-      toast.style.visibility = 'visible';
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateX(-50%) translateY(0)';
-
-      setTimeout(() => {
-        toast.style.opacity = '0';
-        toast.style.transform = 'translateX(-50%) translateY(-20px)';
-        setTimeout(() => toast.style.visibility = 'hidden', 500);
-      }, 3000);
+      toast.style.background = success ? "#28a745" : "#dc3545";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
-    // --- Max 3 skick per dag ---
-    const MAX_SENDS = 3;
-    const today = new Date().toISOString().split('T')[0];
-    let sendData = JSON.parse(localStorage.getItem('sendData')) || { date: today, count: 0 };
-    if (sendData.date !== today) {
-      sendData = { date: today, count: 0 };
-      localStorage.setItem('sendData', JSON.stringify(sendData));
-    }
-
-    sendBtn.addEventListener('click', () => {
-      if (sendData.count >= MAX_SENDS) {
-        showToast('Du har nått max antal förslag idag.', false);
-        return;
-      }
-
-      const suggestion = suggestionInput.value.trim();
-      if (!suggestion) {
-        showToast('Skriv in ditt förslag innan du skickar.', false);
-        return;
-      }
+    // Skicka förslag via EmailJS
+    document.getElementById('send-suggestion').addEventListener('click', () => {
+      const suggestion = document.getElementById('suggestion-input').value.trim();
+      const button = document.getElementById('send-suggestion');
+      if (!suggestion) { showToast("Skriv in ditt förslag först", false); return; }
+      if (!canSendToday()) { showToast("Max antal förslag för idag uppnått", false); return; }
 
       const userAgent = navigator.userAgent;
       const screenSize = `${window.screen.width}x${window.screen.height}`;
 
+      button.disabled = true;
+      button.textContent = "Skickar...";
+
       emailjs.send('service_ke92itt', 'template_341abdv', {
-        suggestion: suggestion,
-        userAgent: userAgent,
-        screenSize: screenSize
-      }).then(() => {
-        showToast('Tack! Förslaget skickades.');
-
-        const originalText = sendBtn.textContent;
-        sendBtn.textContent = 'Skickat!';
-        sendBtn.disabled = true;
-        setTimeout(() => {
-          sendBtn.textContent = originalText;
-          sendBtn.disabled = false;
-        }, 3000);
-
-        sendData.count++;
-        sendData.date = today;
-        localStorage.setItem('sendData', JSON.stringify(sendData));
-
-        suggestionInput.value = '';
-      }).catch(err => {
+        suggestion,
+        userAgent,
+        screenSize
+      })
+      .then(() => {
+        incrementCount();
+        showToast("Förslaget skickat!");
+        button.textContent = "Skickat!";
+        document.getElementById('suggestion-input').value = '';
+        setTimeout(() => { button.disabled = false; button.textContent = "Skicka förslag"; }, 3000);
+      })
+      .catch(err => {
         console.error(err);
-        showToast('Något gick fel, försök igen.', false);
+        showToast("Något gick fel, försök igen", false);
+        button.disabled = false;
+        button.textContent = "Skicka förslag";
       });
     });
   </script>

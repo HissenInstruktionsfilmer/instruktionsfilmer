@@ -108,13 +108,13 @@
   </style>
 </head>
 <body>
+  <p id="last-updated"></p>
+
   <div class="container">
     <img src="logga.png" alt="Företagslogga" class="logo">
     <h1>Instruktionsfilmer</h1>
 
-    <div class="search-wrapper">
-      <input type="text" id="search" placeholder="Sök efter film...">
-    </div>
+    <input type="text" id="search" placeholder="Sök efter film...">
 
     <nav class="categories">
       <a href="#" class="active">Alla</a>
@@ -147,6 +147,9 @@
   </div>
 
   <script>
+    document.getElementById("last-updated").textContent =
+      "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
+
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
@@ -183,4 +186,5 @@
   </script>
 </body>
 </html>
+
 

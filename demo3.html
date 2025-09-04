@@ -125,6 +125,25 @@
       transition: background 0.3s;
     }
     #send-suggestion:hover { background: #218838; }
+
+    /* Toast */
+    #toast {
+      visibility: hidden;
+      min-width: 250px;
+      margin-left: -125px;
+      background-color: #28a745;
+      color: #fff;
+      text-align: center;
+      border-radius: 8px;
+      padding: 1rem;
+      position: fixed;
+      z-index: 1000;
+      left: 50%;
+      bottom: 30px;
+      font-size: 1rem;
+      opacity: 0;
+      transition: opacity 0.5s, bottom 0.5s;
+    }
   </style>
 </head>
 <body>
@@ -173,6 +192,9 @@
     </div>
   </div>
 
+  <!-- Toast-notifikation -->
+  <div id="toast"></div>
+
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     // Initiera EmailJS
@@ -217,19 +239,39 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // Skicka förslag via EmailJS
-    document.getElementById('send-suggestion').addEventListener('click', () => {
-      const suggestion = document.getElementById('suggestion-input').value.trim();
-      if (!suggestion) { alert('Skriv in ditt förslag innan du skickar.'); return; }
+    // Toast-notifikation
+    const toast = document.getElementById('toast');
+    const sendBtn = document.getElementById('send-suggestion');
+    const suggestionInput = document.getElementById('suggestion-input');
+
+    function showToast(message, success = true) {
+      toast.textContent = message;
+      toast.style.backgroundColor = success ? '#28a745' : '#dc3545';
+      toast.style.visibility = 'visible';
+      toast.style.opacity = '1';
+      toast.style.bottom = '50px';
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.bottom = '30px';
+        setTimeout(() => toast.style.visibility = 'hidden', 500);
+      }, 3000);
+    }
+
+    sendBtn.addEventListener('click', () => {
+      const suggestion = suggestionInput.value.trim();
+      if (!suggestion) { 
+        showToast('Skriv in ditt förslag innan du skickar.', false); 
+        return; 
+      }
 
       emailjs.send('service_ke92itt', 'template_341abdv', { suggestion })
         .then(() => {
-          alert('Förslaget skickat!');
-          document.getElementById('suggestion-input').value = '';
+          showToast('Tack! Förslaget skickades.');
+          suggestionInput.value = '';
         })
         .catch(err => {
           console.error(err);
-          alert('Något gick fel, försök igen.');
+          showToast('Något gick fel, försök igen.', false);
         });
     });
   </script>

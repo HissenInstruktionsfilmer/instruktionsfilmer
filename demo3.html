@@ -28,22 +28,17 @@
     }
     .logo { max-width: 300px; height: auto; margin-bottom: 1rem; }
     h1 { margin-top: 0.5rem; margin-bottom: 1rem; color: #333; }
-
     .search-wrapper { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.5rem 0; display: flex; justify-content: center; }
     #search { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-
     .categories { display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; touch-action: manipulation; background: #fff; padding: 0.5rem; }
     .categories a { background: #007BFF; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: bold; font-size: 1.1rem; transition: background 0.3s; }
     .categories a:hover { background: #0056b3; }
     .categories a.active { background: #28a745; }
-
     @media (min-width: 768px) { .categories { position: sticky; top: 60px; z-index: 99; } }
     .video { margin-bottom: 2.5rem; }
     iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
     h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
-
     @media (max-width: 500px) { .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; } .logo { max-width: 200px; } }
-
     #no-results { display: none; font-size: 1.1rem; color: #777; margin-top: 2rem; }
     #last-updated { display: block; text-align: center; font-size: 0.9rem; color: #555; margin: 1rem auto 0 auto; }
 
@@ -52,7 +47,6 @@
     #suggestion-input { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; }
     #send-suggestion { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: #28a745; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
     #send-suggestion:hover { background: #218838; }
-
   </style>
 </head>
 <body>
@@ -100,11 +94,14 @@
       <input type="text" id="suggestion-input" placeholder="Skriv ditt förslag här">
       <button id="send-suggestion">Skicka förslag</button>
     </div>
+
   </div>
 
-  <!-- EmailJS v4 via CDN -->
   <script type="module">
-    import * as emailjs from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+    import { init, send } from 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+
+    // Initiera EmailJS
+    init('86Xo_kJFJ5nr-AGLL');
 
     // Senast uppdaterad
     document.getElementById("last-updated").textContent =
@@ -145,28 +142,20 @@
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
 
-    // Skicka förslag med EmailJS v4 (utan init)
+    // EmailJS: Skicka förslag
     document.getElementById('send-suggestion').addEventListener('click', () => {
       const suggestion = document.getElementById('suggestion-input').value.trim();
-      if (!suggestion) { 
-        alert('Skriv in ditt förslag innan du skickar.'); 
-        return; 
-      }
+      if (!suggestion) { alert('Skriv in ditt förslag innan du skickar.'); return; }
 
-      emailjs.send(
-        'service_ke92itt',        // Service ID
-        'template_341abdv',       // Template ID
-        { suggestion },           // Variabler
-        '86Xo_kJFJ5nr-AGLL'       // Public Key
-      )
-      .then(() => {
-        alert('Förslaget skickat!');
-        document.getElementById('suggestion-input').value = '';
-      })
-      .catch((err) => {
-        console.error(err);
-        alert('Något gick fel, försök igen.');
-      });
+      send('service_ke92itt', 'template_341abdv', { suggestion })
+        .then(() => {
+          alert('Förslaget skickat!');
+          document.getElementById('suggestion-input').value = '';
+        })
+        .catch(err => {
+          console.error(err);
+          alert('Något gick fel, försök igen.');
+        });
     });
   </script>
 </body>

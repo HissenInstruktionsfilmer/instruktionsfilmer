@@ -37,26 +37,25 @@
       color: #333;
     }
 
-      .search-wrapper {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: #fff;
-        padding: 0.5rem 0;
-        display: flex;
-        justify-content: center;
-      }
-      
-      #search {
-        width: 100%;
-        max-width: 400px;
-        padding: 0.75rem 1rem;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        font-size: 16px; /* Fixar iOS zoom-buggen */
-        box-sizing: border-box; /* Viktigt för att hålla sig innanför */
-      }
-
+    .search-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      padding: 0.5rem 0;
+      display: flex;
+      justify-content: center;
+    }
+    
+    #search {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
 
     .categories {
       display: flex;
@@ -81,11 +80,10 @@
     .categories a:hover { background: #0056b3; }
     .categories a.active { background: #28a745; }
 
-    /* Bara sticky på dator (>=768px) */
     @media (min-width: 768px) {
       .categories {
         position: sticky;
-        top: 60px; /* hamnar under sökfältet */
+        top: 60px;
         z-index: 99;
       }
     }
@@ -96,7 +94,7 @@
 
     @media (max-width: 500px) {
       .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
-      .logo { max-width: 200px; } /* mindre logga på mobil */
+      .logo { max-width: 200px; }
     }
 
     #no-results {
@@ -105,20 +103,22 @@
       color: #777;
       margin-top: 2rem;
     }
+
+    /* Senast uppdaterad */
     #last-updated {
-      display: block;
-      text-align: center;
       font-size: 0.9rem;
       color: #555;
-      margin: 1rem auto 0 auto;
+      margin: 0 0 1rem 0;
     }
 
   </style>
 </head>
 <body>
-  <p id="last-updated"></p>
 
   <div class="container">
+    <!-- Flyttat in här så den centreras med allt innehåll -->
+    <p id="last-updated"></p>
+
     <img src="logga.png" alt="Företagslogga" class="logo">
     <h1>Instruktionsfilmer</h1>
 
@@ -194,7 +194,3 @@
   </script>
 </body>
 </html>
-
-
-
-

@@ -67,6 +67,7 @@
       font-weight: bold;
       font-size: 1.1rem;
       transition: background 0.3s;
+      cursor: pointer;
     }
     .categories a:hover { background: #0056b3; }
     .categories a.active { background: #28a745; }
@@ -92,6 +93,7 @@
     }
 
     #last-updated {
+      display: none; /* Göm från start */
       text-align: center;
       font-size: 0.9rem;
       color: #555;
@@ -198,16 +200,16 @@
 
   <div id="toast" class="toast">Förslaget skickat!</div>
 
-  <!-- EmailJS script (fungerande version) -->
+  <!-- EmailJS script -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
     emailjs.init("86Xo_kJFJ5nr-AGLL");
 
-    // Senast uppdaterad
+    // Sätt datum i last-updated
     document.getElementById("last-updated").textContent =
       "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
-    // Filtrering av videor
+    // Filtrering
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
@@ -220,6 +222,7 @@
         links.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
         filterVideos(category, search.value.toLowerCase());
+        checkSecretCode(category);
       });
     });
 
@@ -240,6 +243,22 @@
         if (show) visibleCount++;
       });
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // Hemlig kod-sekvens: Admin x2, Ekonomi x3, Admin x1
+    const secretSequence = ["Admin","Admin","Ekonomi","Ekonomi","Ekonomi","Admin"];
+    let progress = 0;
+
+    function checkSecretCode(clicked) {
+      if (clicked === secretSequence[progress]) {
+        progress++;
+        if (progress === secretSequence.length) {
+          document.getElementById("last-updated").style.display = "block";
+          progress = 0; // återställ
+        }
+      } else {
+        progress = 0; // fel → börja om
+      }
     }
 
     // Max 3 förslag per dag
@@ -269,7 +288,7 @@
       setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
-    // Skicka förslag via EmailJS
+    // Skicka EmailJS
     document.getElementById('send-suggestion').addEventListener('click', () => {
       const suggestion = document.getElementById('suggestion-input').value.trim();
       const button = document.getElementById('send-suggestion');

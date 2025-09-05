@@ -302,7 +302,7 @@
       if (mockMode) {
         console.log("MOCK skickat:", { suggestion, userAgent, screenSize });
         incrementCount();
-        showToast("Mock: Förslaget låtsasskickat!");
+        showToast("Förslaget skickat!");
         button.textContent = "Skickat!";
         document.getElementById('suggestion-input').value = '';
         setTimeout(() => { button.disabled = false; button.textContent = "Skicka förslag"; }, 3000);

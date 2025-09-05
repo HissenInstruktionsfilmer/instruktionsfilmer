@@ -67,7 +67,6 @@
       font-weight: bold;
       font-size: 1.1rem;
       transition: background 0.3s;
-      cursor: pointer;
     }
     .categories a:hover { background: #0056b3; }
     .categories a.active { background: #28a745; }
@@ -93,11 +92,11 @@
     }
 
     #last-updated {
-      display: none; /* Göm från start */
       text-align: center;
       font-size: 0.9rem;
       color: #555;
       margin: 1rem 0 0.5rem 0;
+      display: none; /* Gömd från start */
     }
 
     /* Förslag-formulär */
@@ -205,11 +204,14 @@
   <script>
     emailjs.init("86Xo_kJFJ5nr-AGLL");
 
-    // Sätt datum i last-updated
+    // Hemliga lägen
+    let mockMode = false;
+
+    // Senast uppdaterad (gömd tills kod skrivs)
     document.getElementById("last-updated").textContent =
       "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
-    // Filtrering
+    // Filtrering av videor + hemliga koder
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
@@ -222,13 +224,25 @@
         links.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
         filterVideos(category, search.value.toLowerCase());
-        checkSecretCode(category);
       });
     });
 
     search.addEventListener('input', () => {
       const activeCategory = document.querySelector('.categories a.active').textContent;
       filterVideos(activeCategory, search.value.toLowerCase());
+
+      const value = search.value.trim().toLowerCase();
+      if (value === "lastupdate") {
+        document.getElementById("last-updated").style.display = "block";
+      }
+      if (value === "nomail") {
+        mockMode = true;
+        showToast("Mock-läge aktiverat");
+      }
+      if (value === "yesmail") {
+        mockMode = false;
+        showToast("Riktiga mejl aktiverade igen");
+      }
     });
 
     function filterVideos(category, searchText) {
@@ -243,22 +257,6 @@
         if (show) visibleCount++;
       });
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
-    }
-
-    // Hemlig kod-sekvens: Admin x2, Ekonomi x3, Admin x1
-    const secretSequence = ["Admin","Admin","Ekonomi","Ekonomi","Ekonomi","Admin"];
-    let progress = 0;
-
-    function checkSecretCode(clicked) {
-      if (clicked === secretSequence[progress]) {
-        progress++;
-        if (progress === secretSequence.length) {
-          document.getElementById("last-updated").style.display = "block";
-          progress = 0; // återställ
-        }
-      } else {
-        progress = 0; // fel → börja om
-      }
     }
 
     // Max 3 förslag per dag
@@ -288,7 +286,7 @@
       setTimeout(() => toast.classList.remove("show"), 3000);
     }
 
-    // Skicka EmailJS
+    // Skicka förslag via EmailJS (eller mock)
     document.getElementById('send-suggestion').addEventListener('click', () => {
       const suggestion = document.getElementById('suggestion-input').value.trim();
       const button = document.getElementById('send-suggestion');
@@ -300,6 +298,16 @@
 
       button.disabled = true;
       button.textContent = "Skickar...";
+
+      if (mockMode) {
+        console.log("MOCK skickat:", { suggestion, userAgent, screenSize });
+        incrementCount();
+        showToast("Mock: Förslaget låtsasskickat!");
+        button.textContent = "Skickat!";
+        document.getElementById('suggestion-input').value = '';
+        setTimeout(() => { button.disabled = false; button.textContent = "Skicka förslag"; }, 3000);
+        return;
+      }
 
       emailjs.send('service_ke92itt', 'template_341abdv', {
         suggestion,

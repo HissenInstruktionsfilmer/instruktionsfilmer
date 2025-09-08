@@ -43,8 +43,8 @@
       padding: 0.5rem 0;
       display: flex;
       justify-content: center;
-      gap: 0.5rem;
     }
+    
     #search {
       width: 100%;
       max-width: 400px;
@@ -54,6 +54,14 @@
       font-size: 16px;
       box-sizing: border-box;
     }
+    
+    /* Ny wrapper för knappen */
+    .search-all-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+    
     #search-all-btn {
       display: none;
       padding: 0.75rem 1.5rem;
@@ -66,7 +74,7 @@
       transition: background 0.3s;
     }
     #search-all-btn:hover { background: #343a40; }
-
+    
     /* ===== KATEGORIER ===== */
     .categories {
       display: flex;
@@ -197,9 +205,11 @@
     <!-- SÖKFÄLT + SÖK I ALLA-KNAPP -->
     <div class="search-wrapper">
       <input type="text" id="search" placeholder="Sök efter film...">
+    </div>
+    <div class="search-all-wrapper">
       <button id="search-all-btn">Sök i alla</button>
     </div>
-
+    
     <!-- KATEGORIER -->
     <nav class="categories">
       <a href="#" class="active">Alla</a>

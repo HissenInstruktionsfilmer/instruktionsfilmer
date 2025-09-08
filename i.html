@@ -211,22 +211,36 @@
 
   <div id="toast" class="toast">Förslaget skickat!</div>
 
-  <!-- EmailJS script (fungerande version) -->
+  <!-- EmailJS script -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
+    // Global variabler
+    let mockMode = false; // Nomail / Yesmail
+    const MAX_PER_DAY = 3; // max antal per dag
+
+    // Toast
+    function showToast(message, success = true) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.background = success ? "#28a745" : "#dc3545";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
     emailjs.init("86Xo_kJFJ5nr-AGLL");
-  
+
     // Senast uppdaterad
     document.getElementById("last-updated").textContent =
       "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
-  
+
     // Filtrering av videor
     const links = document.querySelectorAll('.categories a');
     const videos = document.querySelectorAll('.video');
     const search = document.getElementById('search');
     const noResults = document.getElementById('no-results');
     const categoriesEl = document.querySelector('.categories');
-  
+    const activeLabel = document.getElementById('active-category-label');
+
     links.forEach(link => {
       link.addEventListener('click', e => {
         e.preventDefault();
@@ -234,34 +248,37 @@
         links.forEach(l => l.classList.remove('active'));
         link.classList.add('active');
         filterVideos(category, search.value.toLowerCase());
+        if(window.innerWidth <= 500) activeLabel.textContent = "Sök i: " + category;
       });
     });
-  
+
     search.addEventListener('input', () => {
       const value = search.value.trim().toLowerCase();
       const activeCategory = document.querySelector('.categories a.active').textContent;
-  
-      // Göm bara kategorierna på små skärmar
-      if (window.innerWidth <= 600) {
+
+      // Döljer kategorier på små skärmar
+      if(window.innerWidth <= 500) {
         categoriesEl.style.display = value ? 'none' : 'flex';
+        if(value) activeLabel.style.display = 'block';
+        else activeLabel.style.display = 'none';
       }
-  
+
       filterVideos(activeCategory, value);
-  
-      // Dolda koder i sökfältet
-      if (search.value.trim() === "Lastupdate") {
+
+      // Dolda koder
+      if(search.value.trim() === "Lastupdate") {
         document.getElementById("last-updated").style.display = "block";
       }
-      if (search.value.trim() === "Nomail") {
+      if(search.value.trim() === "Nomail") {
         mockMode = true;
         showToast("Mockläge aktiverat – mejl skickas ej");
       }
-      if (search.value.trim() === "Yesmail") {
+      if(search.value.trim() === "Yesmail") {
         mockMode = false;
         showToast("Riktiga mejl aktiverade igen");
       }
     });
-  
+
     function filterVideos(category, searchText) {
       let visibleCount = 0;
       videos.forEach(video => {
@@ -271,10 +288,62 @@
         const matchesSearch = title.includes(searchText);
         const show = matchesCategory && matchesSearch;
         video.style.display = show ? 'block' : 'none';
-        if (show) visibleCount++;
+        if(show) visibleCount++;
       });
       noResults.style.display = visibleCount === 0 ? 'block' : 'none';
     }
+
+    // Max antal per dag
+    function canSendToday() {
+      const today = new Date().toISOString().split('T')[0];
+      const stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
+      if(stored.date !== today) {
+        localStorage.setItem("suggestionLimit", JSON.stringify({date: today, count: 0}));
+        return true;
+      }
+      return stored.count < MAX_PER_DAY;
+    }
+    function incrementCount() {
+      const today = new Date().toISOString().split('T')[0];
+      const stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
+      const newCount = (stored.date === today ? stored.count : 0) + 1;
+      localStorage.setItem("suggestionLimit", JSON.stringify({date: today, count: newCount}));
+    }
+
+    // Skicka förslag via EmailJS
+    document.getElementById('send-suggestion').addEventListener('click', () => {
+      const suggestion = document.getElementById('suggestion-input').value.trim();
+      const button = document.getElementById('send-suggestion');
+      if(!suggestion) { showToast("Skriv in ditt förslag först", false); return; }
+      if(!canSendToday()) { showToast("Max antal förslag för idag uppnått", false); return; }
+
+      const userAgent = navigator.userAgent;
+      const screenSize = `${window.screen.width}x${window.screen.height}`;
+
+      button.disabled = true;
+      button.textContent = "Skickar...";
+
+      if(mockMode) {
+        showToast("Mockläge – mejl skickas ej");
+        incrementCount();
+        setTimeout(() => { button.disabled = false; button.textContent = "Skicka förslag"; }, 2000);
+      } else {
+        emailjs.send('service_ke92itt', 'template_341abdv', { suggestion, userAgent, screenSize })
+        .then(() => {
+          incrementCount();
+          showToast("Förslaget skickat!");
+          button.textContent = "Skickat!";
+          document.getElementById('suggestion-input').value = '';
+          setTimeout(() => { button.disabled = false; button.textContent = "Skicka förslag"; }, 3000);
+        })
+        .catch(err => {
+          console.error(err);
+          showToast("Något gick fel, försök igen", false);
+          button.disabled = false;
+          button.textContent = "Skicka förslag";
+        });
+      }
+    });
   </script>
 </body>
 </html>

@@ -1,1 +1,359 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instruktionsfilmer</title>
+  <link rel="icon" href="favicon.ico">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    .container {
+      background: #fff;
+      padding: 2rem 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 900px;
+      width: 100%;
+      margin: 2rem;
+      text-align: center;
+    }
+    .logo { max-width: 300px; height: auto; margin-bottom: 1rem; }
+    h1 { margin-top: 0.5rem; margin-bottom: 1rem; color: #333; }
 
+    .search-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      padding: 0.5rem 0;
+      display: flex;
+      justify-content: center;
+    }
+    #search {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+      touch-action: manipulation;
+      background: #fff;
+      padding: 0.5rem;
+    }
+    .categories a {
+      background: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: background 0.3s;
+    }
+    .categories a:hover { background: #0056b3; }
+    .categories a.active { background: #28a745; }
+
+    @media (min-width: 768px) {
+      .categories { position: sticky; top: 60px; z-index: 99; }
+    }
+
+    .video { margin-bottom: 2.5rem; }
+    iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
+    h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
+
+    @media (max-width: 500px) {
+      .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
+      .logo { max-width: 200px; }
+    }
+
+    #no-results {
+      display: none;
+      font-size: 1.1rem;
+      color: #777;
+      margin-top: 2rem;
+    }
+
+    #last-updated {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin: 1rem 0 0.5rem 0;
+      display: none;
+    }
+
+    /* Förslag-formulär */
+    #suggestion-form {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    #suggestion-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    #send-suggestion {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background: #28a745;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #send-suggestion:hover { background: #218838; }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #28a745;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s, transform 0.4s;
+      z-index: 2000;
+    }
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Aktiv kategori etikett */
+    #active-category-label {
+      display: none;
+      text-align: center;
+      margin: 10px 0;
+      font-weight: bold;
+      font-size: 1rem;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <p id="last-updated"></p>
+
+    <img src="logga.png" alt="Företagslogga" class="logo">
+    <h1>Instruktionsfilmer</h1>
+
+    <div class="search-wrapper">
+      <input type="text" id="search" placeholder="Sök efter film...">
+    </div>
+
+    <nav class="categories">
+      <a href="#" class="active">Alla</a>
+      <a href="#">Tekniker</a>
+      <a href="#">Ekonomi</a>
+      <a href="#">Admin</a>
+    </nav>
+
+    <div id="active-category-label"></div>
+
+    <div class="video" data-category="Tekniker">
+      <h2>Rensa cachad metadata i SF Field Service</h2>
+      <iframe src="https://www.youtube.com/embed/F8XBwAMkSzY" allowfullscreen></iframe>
+    </div>
+
+    <div class="video" data-category="Tekniker">
+      <h2>Ominstallation App för Salesforce & Field Service</h2>
+      <iframe src="https://www.youtube.com/embed/sjHgx7GUAlY" allowfullscreen></iframe>
+    </div>
+
+    <div class="video" data-category="Admin Tekniker">
+      <h2>Byt lösenord Salesforce</h2>
+      <iframe src="https://www.youtube.com/embed/_6KcA5QC56g" allowfullscreen></iframe>
+    </div>
+
+    <div class="video" data-category="Tekniker">
+      <h2>Tidsrapportering</h2>
+      <iframe src="https://www.youtube.com/embed/UbFHVYDjNAg" allowfullscreen></iframe>
+    </div>
+
+    <p id="no-results">Inga filmer hittades.</p>
+
+    <div id="suggestion-form">
+      <input type="text" id="suggestion-input" placeholder="Skriv ditt förslag här">
+      <button id="send-suggestion">Skicka förslag</button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Förslaget skickat!</div>
+
+  <!-- EmailJS script (fungerande version) -->
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script>
+    emailjs.init("86Xo_kJFJ5nr-AGLL");
+
+    // Senast uppdaterad
+    document.getElementById("last-updated").textContent =
+      "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
+
+    // Filtrering av videor
+    const links = document.querySelectorAll('.categories a');
+    const videos = document.querySelectorAll('.video');
+    const search = document.getElementById('search');
+    const noResults = document.getElementById('no-results');
+    const categoriesEl = document.querySelector('.categories');
+    const labelEl = document.getElementById("active-category-label");
+
+    links.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const category = link.textContent;
+        links.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        filterVideos(category, search.value.toLowerCase());
+      });
+    });
+
+    search.addEventListener('input', () => {
+      const value = search.value.trim().toLowerCase();
+      const activeCategory = document.querySelector('.categories a.active').textContent;
+
+      if (value) {
+        categoriesEl.style.display = 'none';
+        labelEl.style.display = 'block';
+        labelEl.textContent = "Söker i: " + activeCategory;
+      } else {
+        categoriesEl.style.display = 'flex';
+        labelEl.style.display = 'none';
+      }
+
+      filterVideos(activeCategory, value);
+    });
+
+    function filterVideos(category, searchText) {
+      let visibleCount = 0;
+      videos.forEach(video => {
+        const cats = video.dataset.category.split(' ');
+        const title = video.querySelector('h2').textContent.toLowerCase();
+        const matchesCategory = (category === 'Alla' || cats.includes(category));
+        const matchesSearch = title.includes(searchText);
+        const show = matchesCategory && matchesSearch;
+        video.style.display = show ? 'block' : 'none';
+        if (show) visibleCount++;
+      });
+      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+    // Max 3 förslag per dag
+    const MAX_PER_DAY = 3;
+    function canSendToday() {
+      const today = new Date().toISOString().split('T')[0];
+      const stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
+      if (stored.date !== today) {
+        localStorage.setItem("suggestionLimit", JSON.stringify({ date: today, count: 0 }));
+        return true;
+      }
+      return stored.count < MAX_PER_DAY;
+    }
+    function incrementCount() {
+      const today = new Date().toISOString().split('T')[0];
+      const stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
+      const newCount = (stored.date === today ? stored.count : 0) + 1;
+      localStorage.setItem("suggestionLimit", JSON.stringify({ date: today, count: newCount }));
+    }
+
+    // Toast
+    function showToast(message, success = true) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.style.background = success ? "#28a745" : "#dc3545";
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    // Skicka förslag via EmailJS
+    let mockMode = false; // default: skicka riktiga mejl
+
+    document.getElementById('send-suggestion').addEventListener('click', () => {
+      const suggestion = document.getElementById('suggestion-input').value.trim();
+      const button = document.getElementById('send-suggestion');
+      if (!suggestion) { showToast("Skriv in ditt förslag först", false); return; }
+      if (!canSendToday()) { showToast("Max antal förslag för idag uppnått", false); return; }
+
+      const userAgent = navigator.userAgent;
+      const screenSize = `${window.screen.width}x${window.screen.height}`;
+
+      button.disabled = true;
+      button.textContent = "Skickar...";
+
+      if (mockMode) {
+        console.log("Mock skickat:", { suggestion, userAgent, screenSize });
+        incrementCount();
+        showToast("Mock: Förslaget registrerat!");
+        button.textContent = "Skickat!";
+        document.getElementById('suggestion-input').value = '';
+        setTimeout(() => { button.disabled = false; button.textContent = "Skicka förslag"; }, 3000);
+      } else {
+        emailjs.send('service_ke92itt', 'template_341abdv', {
+          suggestion,
+          userAgent,
+          screenSize
+        })
+        .then(() => {
+          incrementCount();
+          showToast("Förslaget skickat!");
+          button.textContent = "Skickat!";
+          document.getElementById('suggestion-input').value = '';
+          setTimeout(() => { button.disabled = false; button.textContent = "Skicka förslag"; }, 3000);
+        })
+        .catch(err => {
+          console.error(err);
+          showToast("Något gick fel, försök igen", false);
+          button.disabled = false;
+          button.textContent = "Skicka förslag";
+        });
+      }
+    });
+
+    // Dolda koder i sökfältet
+    search.addEventListener('input', () => {
+      const value = search.value.trim();
+      if (value === "Lastupdate") {
+        document.getElementById("last-updated").style.display = "block";
+      }
+      if (value === "Nomail") {
+        mockMode = true;
+        showToast("Mockläge aktiverat – mejl skickas ej");
+      }
+      if (value === "Yesmail") {
+        mockMode = false;
+        showToast("Riktiga mejl aktiverade igen");
+      }
+    });
+  </script>
+</body>
+</html>

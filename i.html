@@ -36,7 +36,9 @@
       background: #fff;
       padding: 0.5rem 0;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
     }
     #search {
       width: 100%;
@@ -46,6 +48,21 @@
       border-radius: 8px;
       font-size: 16px;
       box-sizing: border-box;
+    }
+    #search-all-btn {
+      padding: 0.65rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      background: #495057;
+      color: #fff;
+      font-size: 0.95rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: none; /* styrs via JS */
+    }
+    #search-all-btn:hover {
+      background: #343a40;
     }
 
     .categories {
@@ -170,7 +187,7 @@
 
     <div class="search-wrapper">
       <input type="text" id="search" placeholder="Sök efter film...">
-      <button id="search-all-btn" style="display:none;">Sök i alla</button>
+      <button id="search-all-btn">Sök i alla</button>
     </div>
 
     <nav class="categories">
@@ -241,6 +258,7 @@
     const noResults = document.getElementById('no-results');
     const categoriesEl = document.querySelector('.categories');
     const activeLabel = document.getElementById('active-category-label');
+    const searchAllBtn = document.getElementById('search-all-btn');
 
     links.forEach(link => {
       link.addEventListener('click', e => {
@@ -250,6 +268,7 @@
         link.classList.add('active');
         filterVideos(category, search.value.toLowerCase());
         if(window.innerWidth <= 500) activeLabel.textContent = "Sök i: " + category;
+        updateSearchAllBtn();
       });
     });
 
@@ -260,8 +279,8 @@
       // Döljer kategorier på små skärmar
       if(window.innerWidth <= 500) {
         categoriesEl.style.display = value ? 'none' : 'flex';
-        if(value) activeLabel.style.display = 'block';
-        else activeLabel.style.display = 'none';
+        activeLabel.style.display = value ? 'block' : 'none';
+        updateSearchAllBtn();
       }
 
       filterVideos(activeCategory, value);
@@ -345,36 +364,27 @@
         });
       }
     });
-    const searchAllBtn = document.getElementById('search-all-btn');
 
-searchAllBtn.addEventListener('click', () => {
-  const value = search.value.trim().toLowerCase();
-  videos.forEach(video => {
-    const title = video.querySelector('h2').textContent.toLowerCase();
-    const show = title.includes(value);
-    video.style.display = show ? 'block' : 'none';
-  });
-  noResults.style.display = Array.from(videos).every(v => v.style.display === 'none') ? 'block' : 'none';
-});
+    // Funktion "Sök i alla"
+    searchAllBtn.addEventListener('click', () => {
+      const value = search.value.trim().toLowerCase();
+      videos.forEach(video => {
+        const title = video.querySelector('h2').textContent.toLowerCase();
+        const show = title.includes(value);
+        video.style.display = show ? 'block' : 'none';
+      });
+      noResults.style.display = Array.from(videos).every(v => v.style.display === 'none') ? 'block' : 'none';
+    });
 
-// Visa/dölj "Sök i alla" när underkategorier döljs
-function updateSearchAllBtn() {
-  const categoriesVisible = window.getComputedStyle(categoriesEl).display !== 'none';
-  searchAllBtn.style.display = categoriesVisible ? 'none' : 'inline-block';
-}
+    // Visa/dölj "Sök i alla" när underkategorier döljs
+    function updateSearchAllBtn() {
+      const categoriesVisible = window.getComputedStyle(categoriesEl).display !== 'none';
+      searchAllBtn.style.display = (!categoriesVisible && search.value.trim()) ? 'inline-block' : 'none';
+    }
 
-// Kör vid start och vid fönsterändring
-updateSearchAllBtn();
-window.addEventListener('resize', updateSearchAllBtn);
-
-// Uppdatera även när användaren skriver i sökfältet
-search.addEventListener('input', () => {
-  if(window.innerWidth <= 500) {
-    categoriesEl.style.display = search.value ? 'none' : 'flex';
-    activeLabel.style.display = search.value ? 'block' : 'none';
+    // Kör vid start och vid fönsterändring
     updateSearchAllBtn();
-  }
-});
+    window.addEventListener('resize', updateSearchAllBtn);
   </script>
 </body>
 </html>

@@ -170,6 +170,7 @@
 
     <div class="search-wrapper">
       <input type="text" id="search" placeholder="Sök efter film...">
+      <button id="search-all-btn" style="display:none;">Sök i alla</button>
     </div>
 
     <nav class="categories">
@@ -344,6 +345,36 @@
         });
       }
     });
+    const searchAllBtn = document.getElementById('search-all-btn');
+
+searchAllBtn.addEventListener('click', () => {
+  const value = search.value.trim().toLowerCase();
+  videos.forEach(video => {
+    const title = video.querySelector('h2').textContent.toLowerCase();
+    const show = title.includes(value);
+    video.style.display = show ? 'block' : 'none';
+  });
+  noResults.style.display = Array.from(videos).every(v => v.style.display === 'none') ? 'block' : 'none';
+});
+
+// Visa/dölj "Sök i alla" när underkategorier döljs
+function updateSearchAllBtn() {
+  const categoriesVisible = window.getComputedStyle(categoriesEl).display !== 'none';
+  searchAllBtn.style.display = categoriesVisible ? 'none' : 'inline-block';
+}
+
+// Kör vid start och vid fönsterändring
+updateSearchAllBtn();
+window.addEventListener('resize', updateSearchAllBtn);
+
+// Uppdatera även när användaren skriver i sökfältet
+search.addEventListener('input', () => {
+  if(window.innerWidth <= 500) {
+    categoriesEl.style.display = search.value ? 'none' : 'flex';
+    activeLabel.style.display = search.value ? 'block' : 'none';
+    updateSearchAllBtn();
+  }
+});
   </script>
 </body>
 </html>

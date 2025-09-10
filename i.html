@@ -251,7 +251,7 @@
       }, 3000);
     }
 
-    function undoSend() { pendingSend = false; pendingData = null; updateToast("Du ångrade ditt förslag", false); }
+    function undoSend() { pendingSend = false; pendingData = null; updateToast("Du ångrade ditt förslag", false); resetButton(button,3000); }
 
     function updateToast(message, success = true) {
       const toast = document.getElementById("toast");

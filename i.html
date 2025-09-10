@@ -251,7 +251,11 @@
       }, 3000);
     }
 
-    function undoSend() { pendingSend = false; pendingData = null; updateToast("Du ångrade ditt förslag", false); resetButton(button,3000); }
+    function undoSend() { pendingSend = false; pendingData = null; updateToast("Du ångrade ditt förslag", false); }
+      // Återställ knappen direkt när man ångrar
+      const button = document.getElementById("send-suggestion");
+      resetButton(button, 0); // 0 ms delay för direkt återställning
+    }
 
     function updateToast(message, success = true) {
       const toast = document.getElementById("toast");

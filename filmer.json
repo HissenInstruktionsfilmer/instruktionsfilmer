@@ -2,41 +2,41 @@
   {
     "title": "Rensa cachad metadata i appen Field Service",
     "category": "Tekniker",
-    "src": "https://www.youtube.com/embed/OBBR0k1D2ZY"
+    "youtubeId": "OBBR0k1D2ZY"
   },
   {
     "title": "Ominstallation App för SalesForce & Field Service",
     "category": "Tekniker",
-    "src": "https://www.youtube.com/embed/GCYPDTodYDs"
+    "youtubeId": "GCYPDTodYDs"
   },
   {
     "title": "Byt lösenord i SalesForce",
     "category": "Admin Tekniker",
-    "src": "https://www.youtube.com/embed/WjruJmI-Y2Q"
+    "youtubeId": "WjruJmI-Y2Q"
   },
   {
     "title": "Tidsrapportering",
     "category": "Tekniker",
-    "src": "https://www.youtube.com/embed/-ZK_dOrOCxg"
+    "youtubeId": "-ZK_dOrOCxg"
   },
   {
     "title": "Lämna över AO till arbetsledare",
     "category": "Tekniker",
-    "src": "https://www.youtube.com/embed/At2wD3SMYMA"
+    "youtubeId": "At2wD3SMYMA"
   },
   {
     "title": "Skapa kundportalsanvändare i SF",
     "category": "Admin",
-    "src": "https://www.youtube.com/embed/Y5q-Tl1sjj0"
+    "youtubeId": "Y5q-Tl1sjj0"
   },
   {
     "title": "Hur man skapar en arbetsorder i SalesForce",
     "category": "Tekniker",
-    "src": "https://www.youtube.com/embed/yILCdBTtZ8U"
+    "youtubeId": "yILCdBTtZ8U"
   },
   {
     "title": "Rutiner vid kreditering av faktura",
     "category": "Ekonomi",
-    "src": "https://www.youtube.com/embed/ZwN6ikP3dR0"
+    "youtubeId": "ZwN6ikP3dR0"
   }
 ]

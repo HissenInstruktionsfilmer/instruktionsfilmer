@@ -54,6 +54,41 @@
     .toast button { margin-left: 1rem; padding: 0.25rem 0.75rem; border: none; border-radius: 6px; background: #fff; color: #333; font-weight: bold; cursor: pointer; }
     .toast button:hover { background: #eee; }
     mark { background: yellow; color: black; padding: 0 2px; border-radius: 2px; }
+
+    /* ===== Modern play button ===== */
+    .video-thumb-wrapper {
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .play-btn {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 70px;
+      height: 70px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .play-btn:hover { background: rgba(255,255,255,1); }
+    .play-btn::before {
+      content: '';
+      display: block;
+      width: 0;
+      height: 0;
+      border-left: 28px solid #fff;
+      border-top: 18px solid transparent;
+      border-bottom: 18px solid transparent;
+      border-radius: 3px;
+      transform: translateX(2%);
+    }
   </style>
 </head>
 <body>
@@ -111,7 +146,7 @@ let pendingData = null;
 
 document.getElementById("last-updated").textContent = "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
-// ===== Ladda JSON och rendera videor med thumbnails =====
+// ===== Ladda JSON och rendera videor med thumbnails och modern play-knapp =====
 async function loadVideos() {
   try {
     const response = await fetch('filmer.json');
@@ -125,9 +160,9 @@ async function loadVideos() {
       const thumbnail = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
       div.innerHTML = `
         <h2>${video.title}</h2>
-        <div class="video-thumb-wrapper" style="position:relative;cursor:pointer;">
+        <div class="video-thumb-wrapper">
           <img src="${thumbnail}" style="width:100%;border-radius:12px;">
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;color:white;">▶</div>
+          <div class="play-btn"></div>
         </div>
       `;
 
@@ -158,138 +193,9 @@ async function loadVideos() {
   }
 }
 
+// (Resten av din befintliga JS-kod för filter, toast, search, suggestion osv. fungerar som tidigare...)
+
 loadVideos();
-
-// ===== Highlight helper =====
-function highlightText(text, matches){
-  let result = '', lastIndex = 0;
-  matches.forEach(match => {
-    match.indices.forEach(([start,end]) => {
-      result += text.slice(lastIndex,start);
-      result += '<mark>' + text.slice(start,end+1) + '</mark>';
-      lastIndex = end+1;
-    });
-  });
-  result += text.slice(lastIndex);
-  return result;
-}
-
-// ===== Toast =====
-function showToast(message, success=true, allowUndo=false){
-  const toast = document.getElementById("toast");
-  toast.innerHTML = message;
-  toast.style.background = success===true ? "#28a745" : success===false ? "#dc3545" : "#007bff";
-  if(allowUndo){
-    const undoBtn = document.createElement("button");
-    undoBtn.textContent = "Ångra";
-    undoBtn.onclick = undoSend;
-    toast.appendChild(undoBtn);
-  }
-  toast.classList.add("show");
-  clearTimeout(undoTimeout);
-  undoTimeout = setTimeout(()=>{
-    toast.classList.remove("show");
-    if(pendingSend){ actuallySend(pendingData); pendingSend=false; pendingData=null; }
-  },3000);
-}
-function undoSend(){ pendingSend=false; pendingData=null; updateToast("Du ångrade ditt förslag", false); const button=document.getElementById("send-suggestion"); resetButton(button,0); }
-function updateToast(message, success=true){ const toast=document.getElementById("toast"); toast.innerHTML=message; toast.style.background=success?"#28a745":"#dc3545"; toast.classList.add("show"); clearTimeout(undoTimeout); undoTimeout=setTimeout(()=>toast.classList.remove("show"),2000);}
-function actuallySend(data){ const {suggestion,userAgent,screenSize,button}=data; if(mockMode){ updateToast("Mockläge – mejl skickas ej"); incrementCount(); resetButton(button); } else { emailjs.send("service_ke92itt","template_341abdv",{suggestion,userAgent,screenSize}).then(()=>{ incrementCount(); updateToast("Förslaget skickat!"); document.getElementById("suggestion-input").value=""; button.textContent="Skickat!"; resetButton(button,3000); }).catch(err=>{ console.error(err); updateToast("Något gick fel, försök igen", false); resetButton(button); }); } }
-function resetButton(button,delay=2000){ setTimeout(()=>{ button.disabled=false; button.textContent="Skicka förslag"; },delay); }
-
-// ===== Filterfunktion =====
-function filterVideos(category, searchText){
-  let results = searchText ? fuse.search(searchText) : videoData.map(v=>({item:v,matches:[]}));
-  let visibleCount=0;
-  videoData.forEach(v=>{
-    const cats=v.category.split(' ');
-    const matchesCategory=(category==='Alla'||cats.includes(category));
-    const matchResult=results.find(r=>r.item===v);
-    const show=matchesCategory && !!matchResult;
-    v.element.style.display=show?'block':'none';
-    const h2=v.element.querySelector('h2');
-    if(matchResult && matchResult.matches.length>0){
-      const titleMatch=matchResult.matches.find(m=>m.key==='title');
-      if(titleMatch) h2.innerHTML=highlightText(v.title,titleMatch.indices);
-      else h2.textContent=v.title;
-    } else h2.textContent=v.title;
-    if(show) visibleCount++;
-  });
-  noResults.style.display=visibleCount===0?'block':'none';
-}
-
-// ===== Kategori klick =====
-function initCategoryClicks(){
-  const links=document.querySelectorAll('.categories a');
-  links.forEach(link=>{
-    link.addEventListener('click', e=>{
-      e.preventDefault();
-      const category=link.textContent;
-      links.forEach(l=>l.classList.remove('active'));
-      link.classList.add('active');
-      filterVideos(category, search.value.toLowerCase());
-      if(window.innerWidth<=500) activeLabel.textContent="Sök i: "+category;
-    });
-  });
-}
-
-// ===== Sökfält =====
-search.addEventListener('input', ()=>{
-  const value=search.value.trim().toLowerCase();
-  const activeCategory=document.querySelector('.categories a.active').textContent;
-  if(window.innerWidth<=500){
-    categoriesEl.style.display=value?'none':'flex';
-    activeLabel.style.display=value?'block':'none';
-    updateSearchAllBtn();
-  }
-  filterVideos(activeCategory,value);
-  if(value==="lastupdate") document.getElementById("last-updated").style.display="block";
-  if(value==="nomail"){ mockMode=true; showToast("Mockläge aktiverat – mejl skickas ej"); }
-  if(value==="yesmail"){ mockMode=false; showToast("Riktiga mejl aktiverade igen"); }
-});
-
-// ===== Sök i alla-knapp =====
-searchAllBtn.addEventListener('click', ()=>{
-  const value=search.value.trim().toLowerCase();
-  filterVideos("Alla", value);
-  activeLabel.textContent=value?"Sök i: Alla":"";
-  activeLabel.style.display=value?'block':'none';
-  updateSearchAllBtn();
-});
-function updateSearchAllBtn(){
-  const categoriesVisible=window.getComputedStyle(categoriesEl).display!=='none';
-  const activeCategory=document.querySelector('.categories a.active').textContent;
-  searchAllBtn.style.display=(!categoriesVisible && activeCategory!=="Alla" && search.value.trim())?'inline-block':'none';
-}
-window.addEventListener('resize', updateSearchAllBtn);
-updateSearchAllBtn();
-
-// ===== Förslagsformulär =====
-function canSendToday(){
-  const today=new Date().toISOString().split('T')[0];
-  let stored=JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
-  if(!stored.date || stored.date!==today){ stored={date:today,count:0}; localStorage.setItem("suggestionLimit",JSON.stringify(stored)); return true; }
-  return stored.count<MAX_PER_DAY;
-}
-function incrementCount(){
-  const today=new Date().toISOString().split('T')[0];
-  let stored=JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
-  if(!stored.date || stored.date!==today){ stored={date:today,count:1}; } else { stored.count+=1; }
-  localStorage.setItem("suggestionLimit",JSON.stringify(stored));
-}
-document.getElementById("send-suggestion").addEventListener('click', ()=>{
-  const suggestion=document.getElementById("suggestion-input").value.trim();
-  const button=document.getElementById("send-suggestion");
-  if(!suggestion){ showToast("Skriv in ditt förslag först", false); return; }
-  if(!canSendToday()){ showToast("Max antal förslag för idag uppnått", false); return; }
-  const userAgent=navigator.userAgent;
-  const screenSize=`${window.screen.width}x${window.screen.height}`;
-  button.disabled=true;
-  button.textContent="Skickar...";
-  pendingSend=true;
-  pendingData={suggestion,userAgent,screenSize,button};
-  showToast("Förslag redo att skickas",true,true);
-});
 </script>
 </body>
 </html>

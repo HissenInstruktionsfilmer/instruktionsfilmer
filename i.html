@@ -7,6 +7,7 @@
   <link rel="icon" href="favicon.ico">
 
   <style>
+    /* ===== BODY & CONTAINER ===== */
     body {
       font-family: Arial, sans-serif;
       background: #f9f9f9;
@@ -27,36 +28,134 @@
       margin: 2rem;
       text-align: center;
     }
+
+    /* ===== LOGO & TITEL ===== */
     .logo { max-width: 300px; height: auto; margin-bottom: 1rem; }
     h1 { margin-top: 0.5rem; margin-bottom: 1rem; color: #333; }
-    .search-wrapper { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.5rem 0; display: flex; justify-content: center; }
-    #search { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-    .search-all-wrapper { display: flex; justify-content: center; margin-top: 0.5rem; }
-    #search-all-btn { display: none; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: #495057; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+
+    /* ===== SÖKFÄLT & KNAPP ===== */
+    .search-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #fff;
+      padding: 0.5rem 0;
+      display: flex;
+      justify-content: center;
+    }
+    #search {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.75rem 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .search-all-wrapper {
+      display: flex;
+      justify-content: center;
+      margin-top: 0.5rem;
+    }
+    #search-all-btn {
+      display: none;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      background: #495057;
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
     #search-all-btn:hover { background: #343a40; }
-    .categories { display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; touch-action: manipulation; background: #fff; padding: 0.5rem; }
-    .categories a { background: #007BFF; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: bold; font-size: 1.1rem; transition: background 0.3s; }
+
+    /* ===== KATEGORIER ===== */
+    .categories {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1.5rem 0;
+      flex-wrap: wrap;
+      touch-action: manipulation;
+      background: #fff;
+      padding: 0.5rem;
+    }
+    .categories a {
+      background: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 10px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      transition: background 0.3s;
+    }
     .categories a:hover { background: #0056b3; }
     .categories a.active { background: #28a745; }
-    @media (min-width: 768px) { .categories { position: sticky; top: 60px; z-index: 99; } }
+
+    @media (min-width: 768px) {
+      .categories { position: sticky; top: 60px; z-index: 99; }
+    }
+
+    /* ===== VIDEOS ===== */
     .video { margin-bottom: 2.5rem; }
     iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
     h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
-    @media (max-width: 500px) { .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; } .logo { max-width: 200px; } }
+
+    /* ===== MOBILANPASSNING ===== */
+    @media (max-width: 500px) {
+      .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
+      .logo { max-width: 200px; }
+    }
+
+    /* ===== MEDDELANDEN ===== */
     #no-results { display: none; font-size: 1.1rem; color: #777; margin-top: 2rem; }
     #last-updated { text-align: center; font-size: 0.9rem; color: #555; margin: 1rem 0 0.5rem 0; display: none; }
     #active-category-label { display: none; text-align: center; margin: 10px 0; font-weight: bold; font-size: 1rem; color: #333; }
+
+    /* ===== FÖRSLAGSFORMULÄR ===== */
     #suggestion-form { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
     #suggestion-input { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
     #send-suggestion { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: #28a745; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
     #send-suggestion:hover { background: #218838; }
-    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #28a745; color: #fff; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transition: opacity 0.4s, transform 0.4s; z-index: 2000; }
-    .toast.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
-    .toast button { margin-left: 1rem; padding: 0.25rem 0.75rem; border: none; border-radius: 6px; background: #fff; color: #333; font-weight: bold; cursor: pointer; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #28a745;
+      color: #fff;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s, transform 0.4s;
+      z-index: 2000;
+    }
+    .toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast button {
+      margin-left: 1rem;
+      padding: 0.25rem 0.75rem;
+      border: none;
+      border-radius: 6px;
+      background: #fff;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+    }
     .toast button:hover { background: #eee; }
   </style>
 </head>
 <body>
+
   <div class="container">
     <p id="last-updated"></p>
     <img src="logga.png" alt="Företagslogga" class="logo">
@@ -114,6 +213,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script>
+    // ===== GLOBALA VARIABLER =====
     let mockMode = false;
     const MAX_PER_DAY = 3;
     const search = document.getElementById('search');
@@ -130,21 +230,24 @@
     let pendingSend = false;
     let pendingData = null;
 
+    // ===== TOAST =====
     function showToast(message, success = true, allowUndo = false) {
       const toast = document.getElementById("toast");
       toast.innerHTML = message;
       toast.style.background = success === true ? "#28a745" : success === false ? "#dc3545" : "#007bff";
+
       if (allowUndo) {
         const undoBtn = document.createElement("button");
         undoBtn.textContent = "Ångra";
         undoBtn.onclick = undoSend;
         toast.appendChild(undoBtn);
       }
+
       toast.classList.add("show");
       clearTimeout(undoTimeout);
       undoTimeout = setTimeout(() => {
         toast.classList.remove("show");
-        if (pendingSend) { actuallySend(pendingData); pendingSend = false; pendingData = null; }
+        if (pendingSend) { actuallySend(pendingData); pendingSend=false; pendingData=null; }
       }, 3000);
     }
 
@@ -153,6 +256,7 @@
       pendingData = null;
       updateToast("Du ångrade ditt förslag", false);
 
+      // Återställ knappen direkt
       const button = document.getElementById("send-suggestion");
       resetButton(button, 0);
     }
@@ -178,7 +282,6 @@
             incrementCount();
             updateToast("Förslaget skickat!");
             document.getElementById("suggestion-input").value = "";
-            button.textContent = "Skickat!";
             resetButton(button, 3000);
           })
           .catch(err => {
@@ -189,99 +292,99 @@
       }
     }
 
-    function resetButton(button, delay = 2000) {
-      setTimeout(() => {
-        button.disabled = false;
-        button.textContent = "Skicka förslag";
+    function resetButton(button, delay=2000){
+      setTimeout(()=>{
+        button.disabled=false;
+        button.textContent="Skicka förslag";
       }, delay);
     }
 
-    document.getElementById("last-updated").textContent = "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
+    document.getElementById("last-updated").textContent = "Senast uppdaterad: "+new Date(document.lastModified).toLocaleString();
 
-    function filterVideos(category, searchText) {
-      let visibleCount = 0;
-      videos.forEach(video => {
+    // ===== FILTRERING =====
+    function filterVideos(category, searchText){
+      let visibleCount=0;
+      videos.forEach(video=>{
         const cats = video.dataset.category.split(' ');
         const title = video.querySelector('h2').textContent.toLowerCase();
-        const matchesCategory = (category === 'Alla' || cats.includes(category));
+        const matchesCategory = (category==='Alla'||cats.includes(category));
         const matchesSearch = title.includes(searchText);
         const show = matchesCategory && matchesSearch;
         video.style.display = show ? 'block' : 'none';
-        if (show) visibleCount++;
+        if(show) visibleCount++;
       });
-      noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+      noResults.style.display = visibleCount===0?'block':'none';
     }
 
-    function canSendToday() {
-      const today = new Date().toISOString().split('T')[0];
-      let stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
-      if (stored.date !== today) {
-        stored = { date: today, count: 0 };
-        localStorage.setItem("suggestionLimit", JSON.stringify(stored));
+    function canSendToday(){
+      const today=new Date().toISOString().split('T')[0];
+      const stored=JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
+      if(stored.date!==today){
+        localStorage.setItem("suggestionLimit",JSON.stringify({date:today,count:0}));
+        return true;
       }
-      const count = Number(stored.count) || 0;
-      return count < MAX_PER_DAY;
+      return stored.count<MAX_PER_DAY;
     }
 
-    function incrementCount() {
-      const today = new Date().toISOString().split('T')[0];
-      let stored = JSON.parse(localStorage.getItem("suggestionLimit") || "{}");
-      if (stored.date !== today) stored = { date: today, count: 0 };
-      stored.count = (Number(stored.count) || 0) + 1;
-      localStorage.setItem("suggestionLimit", JSON.stringify(stored));
+    function incrementCount(){
+      const today=new Date().toISOString().split('T')[0];
+      const stored=JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
+      const newCount=(stored.date===today?stored.count:0)+1;
+      localStorage.setItem("suggestionLimit",JSON.stringify({date:today,count:newCount}));
     }
 
-    links.forEach(link => {
-      link.addEventListener('click', e => {
+    // ===== EVENT LISTENERS =====
+    links.forEach(link=>{
+      link.addEventListener('click',e=>{
         e.preventDefault();
         const category = link.textContent;
-        links.forEach(l => l.classList.remove('active'));
+        links.forEach(l=>l.classList.remove('active'));
         link.classList.add('active');
         filterVideos(category, search.value.toLowerCase());
-        if (window.innerWidth <= 500) activeLabel.textContent = "Sök i: " + category;
+        if(window.innerWidth<=500) activeLabel.textContent="Sök i: "+category;
       });
     });
 
-    search.addEventListener('input', () => {
+    search.addEventListener('input',()=>{
       const value = search.value.trim();
       const activeCategory = document.querySelector('.categories a.active').textContent;
-      if (window.innerWidth <= 500) {
+      if(window.innerWidth<=500){
         categoriesEl.style.display = value ? 'none' : 'flex';
         activeLabel.style.display = value ? 'block' : 'none';
         updateSearchAllBtn();
       }
-      filterVideos(activeCategory, value);
-      if (value === "Lastupdate") document.getElementById("last-updated").style.display = "block";
-      if (value === "Nomail") { mockMode = true; showToast("Mockläge aktiverat – mejl skickas ej"); }
-      if (value === "Yesmail") { mockMode = false; showToast("Riktiga mejl aktiverade igen"); }
+      filterVideos(activeCategory,value);
+      if(value==="Lastupdate") document.getElementById("last-updated").style.display="block";
+      if(value==="Nomail") { mockMode=true; showToast("Mockläge aktiverat – mejl skickas ej"); }
+      if(value==="Yesmail") { mockMode=false; showToast("Riktiga mejl aktiverade igen"); }
     });
 
-    searchAllBtn.addEventListener('click', () => {
+    searchAllBtn.addEventListener('click',()=>{
       const value = search.value.trim().toLowerCase();
-      videos.forEach(video => {
+      videos.forEach(video=>{
         const title = video.querySelector('h2').textContent.toLowerCase();
-        video.style.display = title.includes(value) ? 'block' : 'none';
+        video.style.display = title.includes(value)?'block':'none';
       });
-      noResults.style.display = Array.from(videos).every(v => v.style.display === 'none') ? 'block' : 'none';
-      activeLabel.textContent = value ? "Sök i: Alla" : "";
-      activeLabel.style.display = value ? 'block' : 'none';
+      noResults.style.display = Array.from(videos).every(v=>v.style.display==='none')?'block':'none';
+      activeLabel.textContent = value?"Sök i: Alla":"";
+      activeLabel.style.display = value?'block':'none';
       updateSearchAllBtn();
     });
 
-    function updateSearchAllBtn() {
-      const categoriesVisible = window.getComputedStyle(categoriesEl).display !== 'none';
+    function updateSearchAllBtn(){
+      const categoriesVisible = window.getComputedStyle(categoriesEl).display!=='none';
       const activeCategory = document.querySelector('.categories a.active').textContent;
-      searchAllBtn.style.display = (!categoriesVisible && activeCategory !== "Alla" && search.value.trim()) ? 'inline-block' : 'none';
+      searchAllBtn.style.display = (!categoriesVisible && activeCategory!=="Alla" && search.value.trim())?'inline-block':'none';
     }
 
-    window.addEventListener('resize', updateSearchAllBtn);
+    window.addEventListener('resize',updateSearchAllBtn);
     updateSearchAllBtn();
 
-    document.getElementById("send-suggestion").addEventListener("click", () => {
+    document.getElementById("send-suggestion").addEventListener("click",()=>{
       const suggestion = document.getElementById("suggestion-input").value.trim();
       const button = document.getElementById("send-suggestion");
-      if (!suggestion) { showToast("Skriv in ditt förslag först", false); return; }
-      if (!canSendToday()) { showToast("Max antal förslag för idag uppnått", false); return; }
+      if(!suggestion){ showToast("Skriv in ditt förslag först", false); return; }
+      if(!canSendToday()){ showToast("Max antal förslag för idag uppnått", false); return; }
       const userAgent = navigator.userAgent;
       const screenSize = `${window.screen.width}x${window.screen.height}`;
       pendingSend = true;
@@ -291,5 +394,6 @@
       showToast("Förslaget skickas...", true, true);
     });
   </script>
+
 </body>
 </html>

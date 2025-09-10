@@ -426,3 +426,12 @@ document.getElementById("send-suggestion").addEventListener('click', ()=>{
   if(!canSendToday()){ showToast("Max antal förslag för idag uppnått", false); return; }
   const userAgent = navigator.userAgent;
   const screenSize = `${window.screen.width}x${window.screen.height}`;
+  button.disabled = true;
+  button.textContent = "Skickar...";
+  pendingSend=true;
+  pendingData={ suggestion, userAgent, screenSize, button };
+  showToast("Förslag redo att skickas", true, true);
+});
+</script>
+</body>
+</html>

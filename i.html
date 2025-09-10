@@ -40,7 +40,6 @@
     .categories a.active { background: #28a745; }
     @media (min-width: 768px) { .categories { position: sticky; top: 60px; z-index: 99; } }
     .video { margin-bottom: 2.5rem; }
-    iframe { width: 100%; aspect-ratio: 16/9; border-radius: 12px; border: none; }
     h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
     @media (max-width: 500px) { .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; } .logo { max-width: 200px; } }
     #no-results { display: none; font-size: 1.1rem; color: #777; margin-top: 2rem; }
@@ -79,7 +78,6 @@
   </nav>
   <div id="active-category-label"></div>
 
-  <!-- Här kommer videor dynamiskt -->
   <div id="video-container"></div>
   <p id="no-results">Inga filmer hittades.</p>
 
@@ -113,7 +111,7 @@ let pendingData = null;
 
 document.getElementById("last-updated").textContent = "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
-// ===== Ladda JSON och rendera videor =====
+// ===== Ladda JSON och rendera videor med thumbnails =====
 async function loadVideos() {
   try {
     const response = await fetch('filmer.json');
@@ -123,8 +121,21 @@ async function loadVideos() {
       const div = document.createElement('div');
       div.classList.add('video');
       div.dataset.category = video.category;
-      div.innerHTML = `<h2>${video.title}</h2>
-                       <iframe src="https://www.youtube.com/embed/${video.youtubeId}" allowfullscreen></iframe>`;
+
+      const thumbnail = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
+      div.innerHTML = `
+        <h2>${video.title}</h2>
+        <div class="video-thumb-wrapper" style="position:relative;cursor:pointer;">
+          <img src="${thumbnail}" style="width:100%;border-radius:12px;">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;color:white;">▶</div>
+        </div>
+      `;
+
+      const wrapper = div.querySelector('.video-thumb-wrapper');
+      wrapper.addEventListener('click', () => {
+        wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${video.youtubeId}" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:12px;border:none;"></iframe>`;
+      });
+
       videoContainer.appendChild(div);
     });
 
@@ -181,80 +192,39 @@ function showToast(message, success=true, allowUndo=false){
     if(pendingSend){ actuallySend(pendingData); pendingSend=false; pendingData=null; }
   },3000);
 }
-function undoSend(){
-  pendingSend=false;
-  pendingData=null;
-  updateToast("Du ångrade ditt förslag", false);
-  const button = document.getElementById("send-suggestion");
-  resetButton(button,0);
-}
-function updateToast(message, success=true){
-  const toast = document.getElementById("toast");
-  toast.innerHTML = message;
-  toast.style.background = success ? "#28a745" : "#dc3545";
-  toast.classList.add("show");
-  clearTimeout(undoTimeout);
-  undoTimeout = setTimeout(()=> toast.classList.remove("show"),2000);
-}
-function actuallySend(data){
-  const { suggestion, userAgent, screenSize, button } = data;
-  if(mockMode){
-    updateToast("Mockläge – mejl skickas ej");
-    incrementCount();
-    resetButton(button);
-  } else {
-    emailjs.send("service_ke92itt", "template_341abdv", { suggestion, userAgent, screenSize })
-      .then(()=> {
-        incrementCount();
-        updateToast("Förslaget skickat!");
-        document.getElementById("suggestion-input").value = "";
-        button.textContent = "Skickat!";
-        resetButton(button,3000);
-      })
-      .catch(err=>{
-        console.error(err);
-        updateToast("Något gick fel, försök igen", false);
-        resetButton(button);
-      });
-  }
-}
-function resetButton(button, delay=2000){
-  setTimeout(()=>{ button.disabled=false; button.textContent="Skicka förslag"; }, delay);
-}
+function undoSend(){ pendingSend=false; pendingData=null; updateToast("Du ångrade ditt förslag", false); const button=document.getElementById("send-suggestion"); resetButton(button,0); }
+function updateToast(message, success=true){ const toast=document.getElementById("toast"); toast.innerHTML=message; toast.style.background=success?"#28a745":"#dc3545"; toast.classList.add("show"); clearTimeout(undoTimeout); undoTimeout=setTimeout(()=>toast.classList.remove("show"),2000);}
+function actuallySend(data){ const {suggestion,userAgent,screenSize,button}=data; if(mockMode){ updateToast("Mockläge – mejl skickas ej"); incrementCount(); resetButton(button); } else { emailjs.send("service_ke92itt","template_341abdv",{suggestion,userAgent,screenSize}).then(()=>{ incrementCount(); updateToast("Förslaget skickat!"); document.getElementById("suggestion-input").value=""; button.textContent="Skickat!"; resetButton(button,3000); }).catch(err=>{ console.error(err); updateToast("Något gick fel, försök igen", false); resetButton(button); }); } }
+function resetButton(button,delay=2000){ setTimeout(()=>{ button.disabled=false; button.textContent="Skicka förslag"; },delay); }
 
 // ===== Filterfunktion =====
 function filterVideos(category, searchText){
-  let results = searchText ? fuse.search(searchText) : videoData.map(v=>({item:v, matches:[]}));
-
+  let results = searchText ? fuse.search(searchText) : videoData.map(v=>({item:v,matches:[]}));
   let visibleCount=0;
   videoData.forEach(v=>{
     const cats=v.category.split(' ');
     const matchesCategory=(category==='Alla'||cats.includes(category));
-    const matchResult = results.find(r=>r.item===v);
-    const show = matchesCategory && !!matchResult;
-
-    v.element.style.display = show?'block':'none';
-
-    const h2 = v.element.querySelector('h2');
+    const matchResult=results.find(r=>r.item===v);
+    const show=matchesCategory && !!matchResult;
+    v.element.style.display=show?'block':'none';
+    const h2=v.element.querySelector('h2');
     if(matchResult && matchResult.matches.length>0){
-      const titleMatch = matchResult.matches.find(m=>m.key==='title');
-      if(titleMatch) h2.innerHTML = highlightText(v.title,titleMatch.indices);
-      else h2.textContent = v.title;
-    } else h2.textContent = v.title;
-
+      const titleMatch=matchResult.matches.find(m=>m.key==='title');
+      if(titleMatch) h2.innerHTML=highlightText(v.title,titleMatch.indices);
+      else h2.textContent=v.title;
+    } else h2.textContent=v.title;
     if(show) visibleCount++;
   });
-
-  noResults.style.display = visibleCount===0?'block':'none';
+  noResults.style.display=visibleCount===0?'block':'none';
 }
 
 // ===== Kategori klick =====
 function initCategoryClicks(){
-  const links = document.querySelectorAll('.categories a');
+  const links=document.querySelectorAll('.categories a');
   links.forEach(link=>{
     link.addEventListener('click', e=>{
       e.preventDefault();
-      const category = link.textContent;
+      const category=link.textContent;
       links.forEach(l=>l.classList.remove('active'));
       link.classList.add('active');
       filterVideos(category, search.value.toLowerCase());
@@ -265,11 +235,11 @@ function initCategoryClicks(){
 
 // ===== Sökfält =====
 search.addEventListener('input', ()=>{
-  const value = search.value.trim().toLowerCase();
-  const activeCategory = document.querySelector('.categories a.active').textContent;
+  const value=search.value.trim().toLowerCase();
+  const activeCategory=document.querySelector('.categories a.active').textContent;
   if(window.innerWidth<=500){
-    categoriesEl.style.display = value?'none':'flex';
-    activeLabel.style.display = value?'block':'none';
+    categoriesEl.style.display=value?'none':'flex';
+    activeLabel.style.display=value?'block':'none';
     updateSearchAllBtn();
   }
   filterVideos(activeCategory,value);
@@ -280,41 +250,40 @@ search.addEventListener('input', ()=>{
 
 // ===== Sök i alla-knapp =====
 searchAllBtn.addEventListener('click', ()=>{
-  const value = search.value.trim().toLowerCase();
+  const value=search.value.trim().toLowerCase();
   filterVideos("Alla", value);
-  activeLabel.textContent = value ? "Sök i: Alla" : "";
-  activeLabel.style.display = value?'block':'none';
+  activeLabel.textContent=value?"Sök i: Alla":"";
+  activeLabel.style.display=value?'block':'none';
   updateSearchAllBtn();
 });
 function updateSearchAllBtn(){
-  const categoriesVisible = window.getComputedStyle(categoriesEl).display !== 'none';
-  const activeCategory = document.querySelector('.categories a.active').textContent;
-  searchAllBtn.style.display = (!categoriesVisible && activeCategory!=="Alla" && search.value.trim()) ? 'inline-block' : 'none';
+  const categoriesVisible=window.getComputedStyle(categoriesEl).display!=='none';
+  const activeCategory=document.querySelector('.categories a.active').textContent;
+  searchAllBtn.style.display=(!categoriesVisible && activeCategory!=="Alla" && search.value.trim())?'inline-block':'none';
 }
 window.addEventListener('resize', updateSearchAllBtn);
 updateSearchAllBtn();
 
 // ===== Förslagsformulär =====
 function canSendToday(){
-  const today = new Date().toISOString().split('T')[0];
-  let stored = JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
-  if(!stored.date || stored.date !== today){ stored={date:today,count:0}; localStorage.setItem("suggestionLimit",JSON.stringify(stored)); return true; }
-  return stored.count < MAX_PER_DAY;
+  const today=new Date().toISOString().split('T')[0];
+  let stored=JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
+  if(!stored.date || stored.date!==today){ stored={date:today,count:0}; localStorage.setItem("suggestionLimit",JSON.stringify(stored)); return true; }
+  return stored.count<MAX_PER_DAY;
 }
 function incrementCount(){
-  const today = new Date().toISOString().split('T')[0];
-  let stored = JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
-  if(!stored.date || stored.date!==today){ stored={date:today,count:1}; }
-  else { stored.count+=1; }
+  const today=new Date().toISOString().split('T')[0];
+  let stored=JSON.parse(localStorage.getItem("suggestionLimit")||"{}");
+  if(!stored.date || stored.date!==today){ stored={date:today,count:1}; } else { stored.count+=1; }
   localStorage.setItem("suggestionLimit",JSON.stringify(stored));
 }
 document.getElementById("send-suggestion").addEventListener('click', ()=>{
-  const suggestion = document.getElementById("suggestion-input").value.trim();
-  const button = document.getElementById("send-suggestion");
+  const suggestion=document.getElementById("suggestion-input").value.trim();
+  const button=document.getElementById("send-suggestion");
   if(!suggestion){ showToast("Skriv in ditt förslag först", false); return; }
   if(!canSendToday()){ showToast("Max antal förslag för idag uppnått", false); return; }
-  const userAgent = navigator.userAgent;
-  const screenSize = `${window.screen.width}x${window.screen.height}`;
+  const userAgent=navigator.userAgent;
+  const screenSize=`${window.screen.width}x${window.screen.height}`;
   button.disabled=true;
   button.textContent="Skickar...";
   pendingSend=true;

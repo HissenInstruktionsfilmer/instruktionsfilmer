@@ -106,14 +106,14 @@ let fuse;
 let undoTimeout;
 let pendingSend = false;
 let pendingData = null;
-let activeVideoWrapper = null; // aktuell video
+let activeVideoWrapper = null;
 
 document.getElementById("last-updated").textContent = "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
-// ===== Autofokus på sökfält =====
+// ===== Autofokus sökfält =====
 search.focus();
 
-// ===== Ladda JSON och rendera videor med thumbnails =====
+// ===== Ladda videor =====
 async function loadVideos() {
   try {
     const response = await fetch('filmer.json');
@@ -123,7 +123,6 @@ async function loadVideos() {
       const div = document.createElement('div');
       div.classList.add('video');
       div.dataset.category = video.category;
-    
       const thumbnail = `https://img.youtube.com/vi/${video.youtubeId}/hqdefault.jpg`;
       div.innerHTML = `
         <h2>${video.title}</h2>
@@ -132,10 +131,9 @@ async function loadVideos() {
           <div class="play-overlay"><i class="fas fa-play"></i></div>
         </div>
       `;
-    
+
       const wrapper = div.querySelector('.video-thumb-wrapper');
       wrapper.addEventListener('click', () => {
-        // Återställ tidigare video
         if (activeVideoWrapper && activeVideoWrapper !== wrapper) {
           const prevVideo = activeVideoWrapper.parentElement;
           const prevData = videos.find(v => v.title === prevVideo.querySelector('h2').textContent);
@@ -145,8 +143,7 @@ async function loadVideos() {
             <div class="play-overlay"><i class="fas fa-play"></i></div>
           `;
         }
-    
-        // Ladda ny video med autoplay
+
         wrapper.innerHTML = `
           <iframe 
             src="https://www.youtube.com/embed/${video.youtubeId}?autoplay=1&mute=1" 
@@ -157,7 +154,7 @@ async function loadVideos() {
         `;
         activeVideoWrapper = wrapper;
       });
-    
+
       videoContainer.appendChild(div);
     });
 
@@ -167,7 +164,6 @@ async function loadVideos() {
       category: video.dataset.category
     }));
 
-    // ===== Initiera Fuse.js med mer tolerant sökning och relevanssortering =====
     fuse = new Fuse(videoData, { 
       keys: ['title','category'], 
       threshold: 0.5,
@@ -183,7 +179,7 @@ async function loadVideos() {
 
 loadVideos();
 
-// ===== Highlight helper =====
+// ===== Highlight =====
 function highlightText(text, matches){
   let result = '', lastIndex = 0;
   matches.forEach(match => {
@@ -220,7 +216,7 @@ function updateToast(message, success=true){ const toast=document.getElementById
 function actuallySend(data){ const {suggestion,userAgent,screenSize,button}=data; if(mockMode){ updateToast("Mockläge – mejl skickas ej"); incrementCount(); resetButton(button); } else { emailjs.send("service_ke92itt","template_341abdv",{suggestion,userAgent,screenSize}).then(()=>{ incrementCount(); updateToast("Förslaget skickat!"); document.getElementById("suggestion-input").value=""; button.textContent="Skickat!"; resetButton(button,3000); }).catch(err=>{ console.error(err); updateToast("Något gick fel, försök igen", false); resetButton(button); }); } }
 function resetButton(button,delay=2000){ setTimeout(()=>{ button.disabled=false; button.textContent="Skicka förslag"; },delay); }
 
-// ===== Filterfunktion med relevans =====
+// ===== Filter + mobilvänlig "Sök i alla" =====
 function filterVideos(category, searchText){
   let results;
   if(searchText){
@@ -237,63 +233,66 @@ function filterVideos(category, searchText){
     const show = matchesCategory && !!matchResult;
     
     v.element.style.display = show ? 'block' : 'none';
-
     const h2 = v.element.querySelector('h2');
     if(matchResult && matchResult.matches.length>0){
       const titleMatch = matchResult.matches.find(m => m.key==='title');
       if(titleMatch) h2.innerHTML = highlightText(v.title,titleMatch.indices);
       else h2.textContent = v.title;
     } else h2.textContent = v.title;
-
     if(show) visibleCount++;
   });
-
   noResults.style.display = visibleCount===0 ? 'block' : 'none';
+  updateSearchAllBtn();
 }
 
-// ===== Kategori klick =====
+// ===== "Sök i alla"-knapp logik =====
+function updateSearchAllBtn(){
+  const categoriesVisible = window.getComputedStyle(categoriesEl).display !== 'none';
+  const activeCategory = document.querySelector('.categories a.active').textContent;
+  const hasSearchValue = search.value.trim() !== '';
+  searchAllBtn.style.display = (hasSearchValue && activeCategory !== "Alla" && !categoriesVisible) ? 'inline-block' : 'none';
+}
+
+searchAllBtn.addEventListener('click', ()=>{
+  const value = search.value.trim().toLowerCase();
+  filterVideos("Alla", value);
+  activeLabel.textContent = value ? "Sök i: Alla" : "";
+  activeLabel.style.display = value ? "block" : "none";
+  updateSearchAllBtn();
+});
+
+// ===== Kategorier =====
 function initCategoryClicks(){
-  const links=document.querySelectorAll('.categories a');
+  const links = document.querySelectorAll('.categories a');
   links.forEach(link=>{
     link.addEventListener('click', e=>{
       e.preventDefault();
-      const category=link.textContent;
+      const category = link.textContent;
       links.forEach(l=>l.classList.remove('active'));
       link.classList.add('active');
       filterVideos(category, search.value.trim().toLowerCase());
-      if(window.innerWidth<=500) activeLabel.textContent="Sök i: "+category;
+      if(window.innerWidth <= 500) activeLabel.textContent = "Sök i: "+category;
     });
   });
 }
 
 // ===== Sökfält =====
 search.addEventListener('input', ()=>{
-  const value=search.value.trim().toLowerCase();
-  const activeCategory=document.querySelector('.categories a.active').textContent;
-  if(window.innerWidth<=500){
-    categoriesEl.style.display=value?'none':'flex';
-    activeLabel.style.display=value?'block':'none';
-    updateSearchAllBtn();
+  const value = search.value.trim().toLowerCase();
+  const activeCategory = document.querySelector('.categories a.active').textContent;
+
+  if(window.innerWidth <= 500){
+    categoriesEl.style.display = value ? 'none' : 'flex';
+    activeLabel.style.display = value ? 'block' : 'none';
   }
-  filterVideos(activeCategory,value);
-  if(value==="lastupdate") document.getElementById("last-updated").style.display="block";
-  if(value==="nomail"){ mockMode=true; showToast("Mockläge aktiverat – mejl skickas ej"); }
-  if(value==="yesmail"){ mockMode=false; showToast("Riktiga mejl aktiverade igen"); }
+
+  filterVideos(activeCategory, value);
+
+  if(value === "lastupdate") document.getElementById("last-updated").style.display = "block";
+  if(value === "nomail"){ mockMode=true; showToast("Mockläge aktiverat – mejl skickas ej"); }
+  if(value === "yesmail"){ mockMode=false; showToast("Riktiga mejl aktiverade igen"); }
 });
 
-// ===== Sök i alla-knapp =====
-searchAllBtn.addEventListener('click', ()=>{
-  const value=search.value.trim().toLowerCase();
-  filterVideos("Alla", value);
-  activeLabel.textContent=value?"Sök i: Alla":""; 
-  activeLabel.style.display=value?'block':'none';
-  updateSearchAllBtn();
-});
-function updateSearchAllBtn(){
-  const categoriesVisible=window.getComputedStyle(categoriesEl).display!=='none';
-  const activeCategory=document.querySelector('.categories a.active').textContent;
-  searchAllBtn.style.display=(!categoriesVisible && activeCategory!=="Alla" && search.value.trim())?'inline-block':'none';
-}
 window.addEventListener('resize', updateSearchAllBtn);
 updateSearchAllBtn();
 

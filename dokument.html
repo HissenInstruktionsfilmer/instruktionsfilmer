@@ -10,6 +10,9 @@
       background: #f8f9fa;
       margin: 0;
       padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* hela viewport-höjden */
     }
 
     header {
@@ -24,9 +27,11 @@
     }
 
     .container {
+      flex: 1; /* tar all tillgänglig höjd mellan header och footer */
       max-width: 900px;
       margin: 2rem auto;
       padding: 0 1rem;
+      margin: 2rem auto; /* centrera horisontellt */
     }
 
     .document-grid {

@@ -6,14 +6,6 @@
   <title>Dokument</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-    header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-      background: #f1f1f1; /* ljusgrå bakgrund */
-      padding: 1rem 0;      /* lite utrymme ovanför/under texten */
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* subtil skugga */
-    }
-
     /* Body som flexbox för sticky footer */
     body {
       font-family: Arial, sans-serif;
@@ -25,7 +17,7 @@
       min-height: 100vh;
     }
 
-    /* Innehåll tar allt tillgängligt utrymme */
+    /* Innehåll tar allt utrymme mellan header och footer */
     .container {
       flex: 1;
       max-width: 900px;
@@ -34,23 +26,31 @@
       padding: 0 1rem;
     }
 
+    /* Sticky mörkgrå topp */
     header {
+      width: 100%;
+      background: #495057; /* mörkgrå */
+      color: white;
+      padding: 1rem 0;
       text-align: center;
-      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
     }
 
-    h1 {
-      margin: 0.5rem 0;
-      color: #333;
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
     }
 
-    /* Tillbaka-länk */
     header nav a {
-      color: #5278cc;
+      color: #ffd966; /* kontrastfärg */
       text-decoration: none;
+      margin-left: 10px;
       font-weight: bold;
-      font-size: 0.95rem;
     }
+
     header nav a:hover {
       text-decoration: underline;
     }
@@ -60,6 +60,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1rem;
+      margin-top: 1.5rem;
     }
 
     .doc-card {
@@ -69,6 +70,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       transition: transform 0.2s, box-shadow 0.2s;
     }
+
     .doc-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -91,10 +93,12 @@
       font-weight: bold;
       transition: background 0.3s;
     }
+
     .doc-card a:hover {
       background: #5278cc;
     }
 
+    /* Footer */
     footer {
       text-align: center;
       padding: 1rem;
@@ -102,7 +106,7 @@
       font-size: 14px;
     }
 
-    /* Liten responsiv justering */
+    /* Responsivt */
     @media (max-width: 500px) {
       .document-grid {
         grid-template-columns: 1fr;
@@ -111,14 +115,15 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <h1>Dokument</h1>
-      <nav>
-        <a href="./">← Tillbaka till filmer</a>
-      </nav>
-    </header>
 
+  <header>
+    <h1>Dokument</h1>
+    <nav>
+      <a href="./">← Tillbaka till filmer</a>
+    </nav>
+  </header>
+
+  <div class="container">
     <p>Här hittar du alla dokument som hör till instruktionsfilmerna.</p>
 
     <div class="document-grid">
@@ -147,5 +152,6 @@
   <footer>
     &copy; 2025 Instruktionsfilmer | <a href="./">Tillbaka till startsidan</a>
   </footer>
+
 </body>
 </html>

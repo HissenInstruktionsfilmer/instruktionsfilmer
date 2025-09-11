@@ -53,6 +53,22 @@
     .toast button:hover { background: #eee; }
     mark { background: yellow; color: black; padding: 0 2px; border-radius: 2px; }
     
+    .dokument-button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 5px;
+      border-radius: 8px;
+      background: #b3b3b3;
+      color: #808080;
+      font-size: 14px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: background 0.3s;
+    }
+    
+    .dokument-button:hover {
+      background: #e6c155;
+    }
   </style>
 </head>
 <body>
@@ -65,10 +81,6 @@
 
   <div class="search-wrapper">
     <input type="text" id="search" placeholder="Sök efter film...">
-    
-    <p style="font-size: 14px; margin-top: 8px;">
-      📄 <a href="dokument.html">Visa alla dokument</a>
-    </p>
   </div>
   <div class="search-all-wrapper">
     <button id="search-all-btn">Sök i alla</button>
@@ -79,6 +91,7 @@
     <a href="#">Tekniker</a>
     <a href="#">Ekonomi</a>
     <a href="#">Admin</a>
+    <a href="dokument.html" class="category-button dokument-button">Dokument</a>
   </nav>
   <div id="active-category-label"></div>
 

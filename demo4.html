@@ -37,9 +37,9 @@
     #search-all-btn:hover { background: #343a40; }
 
     .categories { display: flex; justify-content: center; gap: 1rem; margin: 1.5rem 0; flex-wrap: wrap; touch-action: manipulation; background: #fff; padding: 0.5rem; }
-    .categories a { background: #007BFF; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: bold; font-size: 1.1rem; transition: all 0.3s; }
-    .categories a:hover { background: #0056b3; transform: scale(1.05); }
-    .categories a.active { background: #28a745; }
+    .categories a { background: #6696ff; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 999px; font-weight: bold; font-size: 1.1rem; transition: all 0.3s; }
+    .categories a:hover { background: #5278cc; transform: translateY(-2px); }
+    .categories a.active { background: #36b353; }
 
     @media (min-width: 768px) { .categories { position: sticky; top: 60px; z-index: 99; } }
     @media (max-width: 500px) { 
@@ -96,10 +96,10 @@
 
     #suggestion-form { margin-top: 2rem; display: flex; flex-direction: column; align-items: center; gap: 0.5rem; }
     #suggestion-input { width: 100%; max-width: 400px; padding: 0.75rem 1rem; border: 1px solid #ccc; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
-    #send-suggestion { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: #28a745; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
-    #send-suggestion:hover { background: #218838; }
+    #send-suggestion { padding: 0.75rem 1.5rem; border: none; border-radius: 8px; background: #36b353; color: #fff; font-size: 1rem; cursor: pointer; transition: background 0.3s; }
+    #send-suggestion:hover { background: #26803b; }
 
-    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #28a745; color: #fff; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transition: opacity 0.4s, transform 0.4s; z-index: 2000; }
+    .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #36b353; color: #fff; padding: 1rem 1.5rem; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); opacity: 0; pointer-events: none; transition: opacity 0.4s, transform 0.4s; z-index: 2000; }
     .toast.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
     .toast button { margin-left: 1rem; padding: 0.25rem 0.75rem; border: none; border-radius: 6px; background: #fff; color: #333; font-weight: bold; cursor: pointer; }
     .toast button:hover { background: #eee; }
@@ -222,7 +222,7 @@ function highlightText(text, matches){
 function showToast(message, success=true, allowUndo=false){
   const toast = document.getElementById("toast");
   toast.innerHTML = message;
-  toast.style.background = success===true ? "#28a745" : success===false ? "#dc3545" : "#007bff";
+  toast.style.background = success===true ? "#36b353" : success===false ? "#cc2929" : "#6696ff";
   if(allowUndo){
     const undoBtn = document.createElement("button");
     undoBtn.textContent = "Ångra";

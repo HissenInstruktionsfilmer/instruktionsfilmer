@@ -8,26 +8,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      min-height: 100vh;
-    }
-    .container {
-      background: #fff;
-      padding: 2rem 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 900px;
-      width: 100%;
-      margin: 2rem;
-      text-align: center;
-    }
+    body { font-family: Arial, sans-serif; background: #f9f9f9; margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
+    .container { background: #fff; padding: 2rem 1rem; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 900px; width: 100%; margin: 2rem; text-align: center; }
     .logo { max-width: 300px; height: auto; margin-bottom: 1rem; }
     h1 { margin-top: 0.5rem; margin-bottom: 1rem; color: #333; }
     .search-wrapper { position: sticky; top: 0; z-index: 100; background: #fff; padding: 0.5rem 0; display: flex; justify-content: center; }
@@ -42,55 +24,18 @@
     .categories a.active { background: #36b353; }
 
     @media (min-width: 768px) { .categories { position: sticky; top: 60px; z-index: 99; } }
-    @media (max-width: 500px) { 
-      .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; }
-      .logo { max-width: 200px; }
-    }
+    @media (max-width: 500px) { .categories a { flex: 1 1 100%; text-align: center; padding: 1rem 0; } .logo { max-width: 200px; } }
 
     .video { margin-bottom: 2.5rem; }
     h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #444; }
 
-    .video-thumb-wrapper {
-      position: relative;
-      cursor: pointer;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .video-thumb-wrapper img {
-      width: 100%;
-      display: block;
-      border-radius: 12px;
-    }
+    .video-thumb-wrapper { position: relative; cursor: pointer; border-radius: 12px; overflow: hidden; }
+    .video-thumb-wrapper img { width: 100%; display: block; border-radius: 12px; }
 
-    /* Ny play-knapp enligt din CSS */
-    .play-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 80px;
-      height: 80px;
-      background: #efeeee;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      transition: all 0.3s ease-in-out;
-    }
-    .play-overlay .fas {
-      display: grid;
-      place-items: center;
-      font-size: 3rem;
-      color: gray;
-      transform: translateX(3px); /* flyttar ikonen 3px åt höger */
-    }
-    .video-thumb-wrapper:hover .play-overlay {
-      transform: translate(-50%, -50%) scale(1.1);
-    }
-    .video-thumb-wrapper:active .play-overlay {
-    }
-    .video-thumb-wrapper:active .play-overlay .fas {
-      color:#5278cc;
-    }
+    .play-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; background: #efeeee; border-radius: 50%; display: grid; place-items: center; transition: all 0.3s ease-in-out; }
+    .play-overlay .fas { display: grid; place-items: center; font-size: 3rem; color: gray; transform: translateX(3px); }
+    .video-thumb-wrapper:hover .play-overlay { transform: translate(-50%, -50%) scale(1.1); }
+    .video-thumb-wrapper:active .play-overlay .fas { color:#5278cc; }
 
     #no-results { display: none; font-size: 1.1rem; color: #777; margin-top: 2rem; }
     #last-updated { text-align: center; font-size: 0.9rem; color: #555; margin: 1rem 0 0.5rem 0; display: none; }
@@ -160,8 +105,9 @@ let fuse;
 let undoTimeout;
 let pendingSend = false;
 let pendingData = null;
-
 document.getElementById("last-updated").textContent = "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
+
+let activeVideoWrapper = null; // sparar aktuell video
 
 // ===== Ladda JSON och rendera videor med thumbnails =====
 async function loadVideos() {
@@ -185,7 +131,20 @@ async function loadVideos() {
 
       const wrapper = div.querySelector('.video-thumb-wrapper');
       wrapper.addEventListener('click', () => {
+        // Återställ tidigare video till thumbnail
+        if (activeVideoWrapper && activeVideoWrapper !== wrapper) {
+          const prevVideo = activeVideoWrapper.parentElement;
+          const prevData = videos.find(v => v.title === prevVideo.querySelector('h2').textContent);
+          const prevThumbnail = `https://img.youtube.com/vi/${prevData.youtubeId}/hqdefault.jpg`;
+          activeVideoWrapper.innerHTML = `
+            <img src="${prevThumbnail}">
+            <div class="play-overlay"><i class="fas fa-play"></i></div>
+          `;
+        }
+
+        // Ladda ny video med autoplay
         wrapper.innerHTML = `<iframe src="https://www.youtube.com/embed/${video.youtubeId}?autoplay=1" allowfullscreen style="width:100%;aspect-ratio:16/9;border-radius:12px;border:none;"></iframe>`;
+        activeVideoWrapper = wrapper;
       });
 
       videoContainer.appendChild(div);

@@ -125,7 +125,7 @@ async function loadVideos() {
       div.innerHTML = `
         <h2>${video.title}</h2>
         <div class="video-thumb-wrapper">
-          <img src="${thumbnail}">
+          <img src="${thumbnail}" loading="lazy">
           <div class="play-overlay"><i class="fas fa-play"></i></div>
         </div>
       `;

@@ -4,26 +4,113 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dokument</title>
-  <link rel="stylesheet" href="style.css"> <!-- Din vanliga CSS -->
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #333;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    h1 {
+      margin: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+
+    .document-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+    }
+
+    .doc-card {
+      background: white;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .doc-card h3 {
+      margin-top: 0;
+    }
+
+    .doc-card a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #6696ff;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+
+    .doc-card a:hover {
+      background: #5278cc;
+    }
+
+    footer {
+      margin-top: 3rem;
+      text-align: center;
+      padding: 1rem;
+      background: #eee;
+      font-size: 14px;
+    }
+  </style>
 </head>
 <body>
   <header>
+    <h1>Dokument</h1>
     <nav>
-      <a href="index.html">Hem</a>
-      <a href="filmer.html">Filmer</a>
-      <a href="dokument.html" class="active">Dokument</a>
+      <a href="index.html" style="color: white; text-decoration: underline;">← Tillbaka till filmer</a>
     </nav>
   </header>
 
-  <main>
-    <h1>Dokument</h1>
-    <p>Här hittar du alla dokument som hör till filmerna.</p>
+  <div class="container">
+    <p>Här hittar du alla dokument som hör till instruktionsfilmerna.</p>
 
-    <ul class="dokument-lista">
-      <li><a href="docs/video1.pdf" target="_blank">📄 Dokument – Video 1</a></li>
-      <li><a href="docs/video2.pdf" target="_blank">📄 Dokument – Video 2</a></li>
-      <li><a href="docs/video3.pdf" target="_blank">📄 Dokument – Video 3</a></li>
-    </ul>
-  </main>
+    <div class="document-grid">
+      <div class="doc-card">
+        <h3>Dokument 1</h3>
+        <p>Kort beskrivning av dokumentet.</p>
+        <a href="docs/video1.pdf" target="_blank">Öppna</a>
+      </div>
+
+      <div class="doc-card">
+        <h3>Dokument 2</h3>
+        <p>Kort beskrivning av dokumentet.</p>
+        <a href="docs/video2.pdf" target="_blank">Öppna</a>
+      </div>
+
+      <div class="doc-card">
+        <h3>Dokument 3</h3>
+        <p>Kort beskrivning av dokumentet.</p>
+        <a href="docs/video3.pdf" target="_blank">Öppna</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    &copy; 2025 Instruktionsfilmer | <a href="index.html">Tillbaka till startsidan</a>
+  </footer>
 </body>
 </html>

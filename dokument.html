@@ -4,39 +4,50 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dokument</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
+    /* Body som flexbox för sticky footer */
     body {
       font-family: Arial, sans-serif;
-      background: #f8f9fa;
+      background: #f9f9f9;
       margin: 0;
       padding: 0;
       display: flex;
       flex-direction: column;
-      min-height: 100vh; /* hela viewport-höjden */
+      min-height: 100vh;
+    }
+
+    /* Innehåll tar allt tillgängligt utrymme */
+    .container {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem;
     }
 
     header {
-      background: #333;
-      color: white;
-      padding: 1rem;
       text-align: center;
+      margin-bottom: 1.5rem;
     }
 
     h1 {
-      margin: 0;
+      margin: 0.5rem 0;
+      color: #333;
     }
 
-    .container {
-      flex: 1; /* tar all tillgänglig höjd mellan header och footer */
-      background: #fff;
-      padding: 2rem 1rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 900px;
-      width: 100%;
-      margin: 2rem auto; /* centrera horisontellt */
+    /* Tillbaka-länk */
+    header nav a {
+      color: #5278cc;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 0.95rem;
+    }
+    header nav a:hover {
+      text-decoration: underline;
     }
 
+    /* Grid för dokumenten */
     .document-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -44,13 +55,12 @@
     }
 
     .doc-card {
-      background: white;
+      background: #fff;
       border-radius: 8px;
       padding: 1rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       transition: transform 0.2s, box-shadow 0.2s;
     }
-
     .doc-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -58,6 +68,8 @@
 
     .doc-card h3 {
       margin-top: 0;
+      font-size: 1.1rem;
+      color: #333;
     }
 
     .doc-card a {
@@ -71,54 +83,61 @@
       font-weight: bold;
       transition: background 0.3s;
     }
-
     .doc-card a:hover {
       background: #5278cc;
     }
 
     footer {
-      margin-top: 3rem;
       text-align: center;
       padding: 1rem;
       background: #eee;
       font-size: 14px;
     }
+
+    /* Liten responsiv justering */
+    @media (max-width: 500px) {
+      .document-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Dokument</h1>
-    <nav>
-      <a href="./" style="color: white; text-decoration: underline;">← Tillbaka till filmer</a>
-    </nav>
-  </header>
-
   <div class="container">
-    <p>Utbildningsmaterial</p>
+    <header>
+      <h1>Dokument</h1>
+      <nav>
+        <a href="./">← Tillbaka till filmer</a>
+      </nav>
+    </header>
+
+    <p>Här hittar du alla dokument som hör till instruktionsfilmerna.</p>
 
     <div class="document-grid">
       <div class="doc-card">
         <h3>Dokument 1</h3>
         <p>Kort beskrivning av dokumentet.</p>
-        <a href="docs/video1.pdf" target="_blank">Öppna</a>
+        <a href="docs/video1.docx" target="_blank">Öppna</a>
       </div>
 
       <div class="doc-card">
         <h3>Dokument 2</h3>
         <p>Kort beskrivning av dokumentet.</p>
-        <a href="docs/video2.pdf" target="_blank">Öppna</a>
+        <a href="docs/video2.docx" target="_blank">Öppna</a>
       </div>
 
       <div class="doc-card">
         <h3>Dokument 3</h3>
         <p>Kort beskrivning av dokumentet.</p>
-        <a href="docs/video3.pdf" target="_blank">Öppna</a>
+        <a href="docs/video3.docx" target="_blank">Öppna</a>
       </div>
+
+      <!-- Lägg till fler dokument här -->
     </div>
   </div>
 
   <footer>
-    &copy; 2025 Utbildningsmaterial | Hissen AB
+    &copy; 2025 Instruktionsfilmer | <a href="./">Tillbaka till startsidan</a>
   </footer>
 </body>
 </html>

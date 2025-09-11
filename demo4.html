@@ -255,9 +255,19 @@ function updateSearchAllBtn(){
 
 searchAllBtn.addEventListener('click', ()=>{
   const value = search.value.trim().toLowerCase();
+
+  // Sätt aktiv kategori till "Alla"
+  const links = document.querySelectorAll('.categories a');
+  links.forEach(l => l.classList.remove('active'));
+  const allaLink = Array.from(links).find(l => l.textContent === "Alla");
+  if(allaLink) allaLink.classList.add('active');
+
   filterVideos("Alla", value);
+  
+  // Uppdatera label på mobil
   activeLabel.textContent = value ? "Sök i: Alla" : "";
   activeLabel.style.display = value ? "block" : "none";
+
   updateSearchAllBtn();
 });
 

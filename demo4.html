@@ -110,6 +110,9 @@ let activeVideoWrapper = null; // aktuell video
 
 document.getElementById("last-updated").textContent = "Senast uppdaterad: " + new Date(document.lastModified).toLocaleString();
 
+// ===== Autofokus på sökfält =====
+search.focus();
+
 // ===== Ladda JSON och rendera videor med thumbnails =====
 async function loadVideos() {
   try {
@@ -125,7 +128,7 @@ async function loadVideos() {
       div.innerHTML = `
         <h2>${video.title}</h2>
         <div class="video-thumb-wrapper">
-          <img src="${thumbnail}" loading="lazy">
+          <img src="${thumbnail}" loading="lazy" decoding="async">
           <div class="play-overlay"><i class="fas fa-play"></i></div>
         </div>
       `;
@@ -138,7 +141,7 @@ async function loadVideos() {
           const prevData = videos.find(v => v.title === prevVideo.querySelector('h2').textContent);
           const prevThumbnail = `https://img.youtube.com/vi/${prevData.youtubeId}/hqdefault.jpg`;
           activeVideoWrapper.innerHTML = `
-            <img src="${prevThumbnail}" loading="lazy">
+            <img src="${prevThumbnail}" loading="lazy" decoding="async">
             <div class="play-overlay"><i class="fas fa-play"></i></div>
           `;
         }
@@ -164,7 +167,14 @@ async function loadVideos() {
       category: video.dataset.category
     }));
 
-    fuse = new Fuse(videoData, { keys: ['title','category'], threshold: 0.4, includeMatches: true });
+    // ===== Initiera Fuse.js med mer tolerant sökning och relevanssortering =====
+    fuse = new Fuse(videoData, { 
+      keys: ['title','category'], 
+      threshold: 0.5,
+      includeMatches: true,
+      includeScore: true
+    });
+
     initCategoryClicks();
   } catch(err) {
     console.error('Kunde inte ladda videor:', err);
@@ -210,25 +220,35 @@ function updateToast(message, success=true){ const toast=document.getElementById
 function actuallySend(data){ const {suggestion,userAgent,screenSize,button}=data; if(mockMode){ updateToast("Mockläge – mejl skickas ej"); incrementCount(); resetButton(button); } else { emailjs.send("service_ke92itt","template_341abdv",{suggestion,userAgent,screenSize}).then(()=>{ incrementCount(); updateToast("Förslaget skickat!"); document.getElementById("suggestion-input").value=""; button.textContent="Skickat!"; resetButton(button,3000); }).catch(err=>{ console.error(err); updateToast("Något gick fel, försök igen", false); resetButton(button); }); } }
 function resetButton(button,delay=2000){ setTimeout(()=>{ button.disabled=false; button.textContent="Skicka förslag"; },delay); }
 
-// ===== Filterfunktion =====
+// ===== Filterfunktion med relevans =====
 function filterVideos(category, searchText){
-  let results = searchText ? fuse.search(searchText) : videoData.map(v=>({item:v,matches:[]}));  
-  let visibleCount=0;
+  let results;
+  if(searchText){
+    results = fuse.search(searchText).sort((a,b)=>a.score-b.score);
+  } else {
+    results = videoData.map(v=>({item:v,matches:[]}));
+  }
+
+  let visibleCount = 0;
   videoData.forEach(v=>{
-    const cats=v.category.split(' ');
-    const matchesCategory=(category==='Alla'||cats.includes(category));
-    const matchResult=results.find(r=>r.item===v);
-    const show=matchesCategory && !!matchResult;
-    v.element.style.display=show?'block':'none';
-    const h2=v.element.querySelector('h2');
+    const cats = v.category.split(' ');
+    const matchesCategory = (category==='Alla'||cats.includes(category));
+    const matchResult = results.find(r => r.item === v);
+    const show = matchesCategory && !!matchResult;
+    
+    v.element.style.display = show ? 'block' : 'none';
+
+    const h2 = v.element.querySelector('h2');
     if(matchResult && matchResult.matches.length>0){
-      const titleMatch=matchResult.matches.find(m=>m.key==='title');
-      if(titleMatch) h2.innerHTML=highlightText(v.title,titleMatch.indices);
-      else h2.textContent=v.title;
-    } else h2.textContent=v.title;
+      const titleMatch = matchResult.matches.find(m => m.key==='title');
+      if(titleMatch) h2.innerHTML = highlightText(v.title,titleMatch.indices);
+      else h2.textContent = v.title;
+    } else h2.textContent = v.title;
+
     if(show) visibleCount++;
   });
-  noResults.style.display=visibleCount===0?'block':'none';
+
+  noResults.style.display = visibleCount===0 ? 'block' : 'none';
 }
 
 // ===== Kategori klick =====
@@ -240,7 +260,7 @@ function initCategoryClicks(){
       const category=link.textContent;
       links.forEach(l=>l.classList.remove('active'));
       link.classList.add('active');
-      filterVideos(category, search.value.toLowerCase());
+      filterVideos(category, search.value.trim().toLowerCase());
       if(window.innerWidth<=500) activeLabel.textContent="Sök i: "+category;
     });
   });

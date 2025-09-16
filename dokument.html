@@ -115,27 +115,3 @@
 
   <script>
     // Docs-arrayen fylls automatiskt av GitHub Action
-const docs = [];
-  
-    const container = document.querySelector(".document-grid");
-  
-    docs.forEach(doc => {
-      let iconHTML = "";
-      if(doc.icon === "pdf") iconHTML = '<i class="fas fa-file-pdf"></i> ';
-      else if(doc.icon === "word") iconHTML = '<i class="fas fa-file-word"></i> ';
-      else iconHTML = '<i class="fas fa-file"></i> ';
-  
-      const card = `
-        <div class="doc-card">
-          <h3>${doc.name}</h3>
-          <p>${doc.desc}</p>
-          <a href="${doc.file}" target="_blank">
-            ${iconHTML}Öppna
-          </a>
-        </div>
-      `;
-      container.innerHTML += card;
-    });
-  </script>
-</body>
-</html>

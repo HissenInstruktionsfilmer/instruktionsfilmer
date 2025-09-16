@@ -3,7 +3,7 @@ name: Uppdatera dokumentlista
 on:
   push:
     paths:
-      - 'docs/**'   # Trigger när något ändras i docs-mappen
+      - 'docs/**'
 
 jobs:
   update-docs:
@@ -14,18 +14,23 @@ jobs:
 
       - name: Lista alla filer i docs
         run: |
-          FILES=$(ls docs)
-          echo "FILES=$FILES" >> $GITHUB_ENV
+          # Vi använder null-separerade filnamn
+          find docs -maxdepth 1 -type f -print0 > files.txt
 
       - name: Generera docs-array
         run: |
           ARRAY="["
-          for f in $FILES; do
-            NAME="${f%.*}" # tar bort filändelsen
+          while IFS= read -r -d '' f; do
+            FILE_NAME="$(basename "$f")"
+            NAME="${FILE_NAME%.*}"   # Ta bort filändelsen
             DESC="Kort beskrivning av $NAME"
-            ARRAY+="{\"name\":\"$NAME\",\"desc\":\"$DESC\",\"file\":\"docs/$f\"},"
-          done
-          ARRAY="${ARRAY%,}]" # ta bort sista kommatecknet
+            # Escape quotes och backslashes för JSON
+            NAME_ESCAPED=$(echo "$NAME" | sed 's/\\/\\\\/g; s/"/\\"/g')
+            DESC_ESCAPED=$(echo "$DESC" | sed 's/\\/\\\\/g; s/"/\\"/g')
+            FILE_ESCAPED=$(echo "$f" | sed 's/\\/\\\\/g; s/"/\\"/g')
+            ARRAY+="{\"name\":\"$NAME_ESCAPED\",\"desc\":\"$DESC_ESCAPED\",\"file\":\"$FILE_ESCAPED\"},"
+          done < files.txt
+          ARRAY="${ARRAY%,}]"
           echo "ARRAY=$ARRAY" >> $GITHUB_ENV
 
       - name: Uppdatera dokument.html

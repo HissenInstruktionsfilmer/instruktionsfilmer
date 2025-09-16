@@ -68,6 +68,10 @@
       font-size: 1.1rem;
       color: #333;
     }
+    .doc-card p {
+      font-size: 0.9rem;
+      color: #555;
+    }
     .doc-card a {
       display: inline-block;
       margin-top: 10px;
@@ -115,3 +119,31 @@
 
   <script>
     // Docs-arrayen fylls automatiskt av GitHub Action
+    // Exempel: const docs = [{ "name": "Test", "desc": "Kort beskrivning", "file": "docs/Test.pdf", "icon": "pdf" }];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.querySelector(".document-grid");
+
+      if (typeof docs !== "undefined" && Array.isArray(docs)) {
+        docs.forEach(doc => {
+          const card = document.createElement("div");
+          card.className = "doc-card";
+
+          // Fallback till fa-file-alt om ikonen inte matchar
+          const icon = doc.icon ? doc.icon : "file-alt";
+
+          card.innerHTML = `
+            <h3><i class="fas fa-${icon}"></i> ${doc.name}</h3>
+            <p>${doc.desc}</p>
+            <a href="${doc.file}" target="_blank" rel="noopener noreferrer">Öppna</a>
+          `;
+
+          container.appendChild(card);
+        });
+      } else {
+        container.innerHTML = "<p>Inga dokument hittades.</p>";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -6,7 +6,6 @@
   <title>Dokument</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <style>
-    /* Body som flexbox för sticky footer */
     body {
       font-family: Arial, sans-serif;
       background: #f9f9f9;
@@ -16,8 +15,6 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
-    /* Innehåll tar allt utrymme mellan header och footer */
     .container {
       flex: 1;
       max-width: 900px;
@@ -25,11 +22,9 @@
       margin: 2rem auto;
       padding: 0 1rem;
     }
-
-    /* Sticky mörkgrå topp */
     header {
       width: 100%;
-      background: #495057; /* mörkgrå */
+      background: #495057;
       color: white;
       padding: 1rem 0;
       text-align: center;
@@ -38,31 +33,25 @@
       top: 0;
       z-index: 100;
     }
-
     header h1 {
       margin: 0;
       font-size: 1.5rem;
     }
-
     header nav a {
-      color: #ffd966; /* kontrastfärg */
+      color: #ffd966;
       text-decoration: none;
       margin-left: 10px;
       font-weight: bold;
     }
-
     header nav a:hover {
       text-decoration: underline;
     }
-
-    /* Grid för dokumenten */
     .document-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
       gap: 1rem;
       margin-top: 1.5rem;
     }
-
     .doc-card {
       background: #fff;
       border-radius: 8px;
@@ -70,18 +59,15 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
       transition: transform 0.2s, box-shadow 0.2s;
     }
-
     .doc-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-
     .doc-card h3 {
       margin-top: 0;
       font-size: 1.1rem;
       color: #333;
     }
-
     .doc-card a {
       display: inline-block;
       margin-top: 10px;
@@ -93,20 +79,15 @@
       font-weight: bold;
       transition: background 0.3s;
     }
-
     .doc-card a:hover {
       background: #5278cc;
     }
-
-    /* Footer */
     footer {
       text-align: center;
       padding: 1rem;
       background: #eee;
       font-size: 14px;
     }
-
-    /* Responsivt */
     @media (max-width: 500px) {
       .document-grid {
         grid-template-columns: 1fr;
@@ -124,34 +105,38 @@
   </header>
 
   <div class="container">
-    <p>Här kan du hitta rutiner som dokument istället</p>
-
-    <div class="document-grid">
-      <div class="doc-card">
-        <h3>Dokument 1</h3>
-        <p>Kort beskrivning av dokumentet.</p>
-        <a href="docs/video1.docx" target="_blank">Öppna</a>
-      </div>
-
-      <div class="doc-card">
-        <h3>Dokument 2</h3>
-        <p>Kort beskrivning av dokumentet.</p>
-        <a href="docs/video2.docx" target="_blank">Öppna</a>
-      </div>
-
-      <div class="doc-card">
-        <h3>Dokument 3</h3>
-        <p>Kort beskrivning av dokumentet.</p>
-        <a href="docs/video3.docx" target="_blank">Öppna</a>
-      </div>
-
-      <!-- Lägg till fler dokument här -->
-    </div>
+    <p>Här kan du hitta rutiner som dokument istället.</p>
+    <div class="document-grid"></div>
   </div>
 
   <footer>
     2025 Instruktionsfilmer | <a href="https://hissen.se" target="_blank" rel="noopener noreferrer">Hissen AB</a>
   </footer>
 
+  <script>
+    // -----------------------------
+    // Docs-arrayen fylls automatiskt
+    // av GitHub Action
+    // -----------------------------
+    const docs = [
+      // GitHub Action kommer ersätta innehållet här med alla filer i docs/
+    ];
+
+    const container = document.querySelector(".document-grid");
+
+    docs.forEach(doc => {
+      const card = `
+        <div class="doc-card">
+          <h3>${doc.name}</h3>
+          <p>${doc.desc}</p>
+          <a href="${doc.file}" target="_blank">
+            ${doc.file.endsWith('.pdf') ? '<i class="fas fa-file-pdf"></i> ' : '<i class="fas fa-file-word"></i> '}
+            Öppna
+          </a>
+        </div>
+      `;
+      container.innerHTML += card;
+    });
+  </script>
 </body>
 </html>

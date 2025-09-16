@@ -114,24 +114,25 @@
   </footer>
 
   <script>
-    // -----------------------------
-    // Docs-arrayen fylls automatiskt
-    // av GitHub Action
-    // -----------------------------
+    // Docs-arrayen fylls automatiskt av GitHub Action
     const docs = [
-      // GitHub Action kommer ersätta innehållet här med alla filer i docs/
+      // GitHub Action skriver in alla filer här
     ];
-
+  
     const container = document.querySelector(".document-grid");
-
+  
     docs.forEach(doc => {
+      let iconHTML = "";
+      if(doc.icon === "pdf") iconHTML = '<i class="fas fa-file-pdf"></i> ';
+      else if(doc.icon === "word") iconHTML = '<i class="fas fa-file-word"></i> ';
+      else iconHTML = '<i class="fas fa-file"></i> ';
+  
       const card = `
         <div class="doc-card">
           <h3>${doc.name}</h3>
           <p>${doc.desc}</p>
           <a href="${doc.file}" target="_blank">
-            ${doc.file.endsWith('.pdf') ? '<i class="fas fa-file-pdf"></i> ' : '<i class="fas fa-file-word"></i> '}
-            Öppna
+            ${iconHTML}Öppna
           </a>
         </div>
       `;

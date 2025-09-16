@@ -1,0 +1,8 @@
+docs/Ändra lösenord åt annan användare i SF.pdf
+docs/Byt Lösenord Salesforce (Tekniker) (4).pdf
+docs/Lämna över AO till arbetsledare UNA (1).pdf
+docs/Ominstallation App (6).pdf
+docs/Rensa cachad metadata i SF-apparna.pdf
+docs/Rutin Kreditering.docx
+docs/Skapa AO.docx
+docs/Skapa kundportalsanvändare i SF.pdf

@@ -34,11 +34,14 @@ jobs:
           ARRAY="${ARRAY%,}]"
           echo "ARRAY=$ARRAY" >> $GITHUB_ENV
 
-      - name: Uppdatera dokument.html
+      - name: Force-commit dokument.html
         run: |
-          # Ersätt hela docs-arrayen oavsett innehåll
           sed -i 's|const docs = \[.*\];|const docs = '"$ARRAY"';|' dokument.html
-          echo "dokument.html uppdaterad med nya filer."
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add dokument.html
+          # Detta kommer skapa en commit om filen ändrats, annars ignoreras
+          git commit -m "Uppdaterad docs-array automatiskt med ikoner och sortering" || echo "Inga ändringar att committa"
 
       - name: Skapa Pull Request
         uses: peter-evans/create-pull-request@v7

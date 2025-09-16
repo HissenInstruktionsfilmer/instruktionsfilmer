@@ -58,5 +58,5 @@ jobs:
           branch: update-docs
           base: main
           title: "Uppdatera docs"
-          body: "Denna PR uppdaterar docs-array automatiskt med ikoner och sortering."
+          body: "Auto PR för docs"
           allow-empty: true

@@ -1,0 +1,41 @@
+name: Uppdatera dokumentlista
+
+on:
+  push:
+    paths:
+      - 'docs/**'   # Trigger när något ändras i docs-mappen
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Lista alla filer i docs
+        run: |
+          FILES=$(ls docs)
+          echo "FILES=$FILES" >> $GITHUB_ENV
+
+      - name: Generera docs-array
+        run: |
+          ARRAY="["
+          for f in $FILES; do
+            NAME="${f%.*}" # tar bort filändelsen
+            DESC="Kort beskrivning av $NAME"
+            ARRAY+="{\"name\":\"$NAME\",\"desc\":\"$DESC\",\"file\":\"docs/$f\"},"
+          done
+          ARRAY="${ARRAY%,}]" # ta bort sista kommatecknet
+          echo "ARRAY=$ARRAY" >> $GITHUB_ENV
+
+      - name: Uppdatera dokument.html
+        run: |
+          sed -i '/const docs = \[/,/];/c\const docs = '"$ARRAY"';' dokument.html
+
+      - name: Commit & push
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add dokument.html
+          git commit -m "Uppdaterad docs-array automatiskt via GitHub Action" || echo "Inga ändringar att commita"
+          git push

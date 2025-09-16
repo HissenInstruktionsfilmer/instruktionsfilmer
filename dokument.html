@@ -15,6 +15,7 @@
       flex-direction: column;
       min-height: 100vh;
     }
+
     header {
       width: 100%;
       background: #495057;
@@ -27,12 +28,7 @@
       z-index: 100;
     }
     header h1 { margin: 0; font-size: 1.5rem; }
-    header nav a {
-      color: #ffd966;
-      text-decoration: none;
-      margin-left: 10px;
-      font-weight: bold;
-    }
+    header nav a { color: #ffd966; text-decoration: none; margin-left: 10px; font-weight: bold; }
     header nav a:hover { text-decoration: underline; }
 
     .container {
@@ -65,15 +61,9 @@
       display: grid;
       grid-template-columns: repeat(auto-fill, 250px);
       gap: 3rem 3rem;
+      justify-content: start;
       width: 100%;
       grid-auto-rows: 1fr;
-      grid-auto-flow: dense;
-      justify-content: start; /* default */
-    }
-
-    .document-grid.flex-center {
-      display: flex;
-      justify-content: center;
     }
 
     .doc-card {
@@ -92,6 +82,7 @@
       transform: translateY(-3px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
+
     .doc-card h3 {
       margin: 0;
       font-size: 1.1rem;
@@ -100,6 +91,7 @@
       align-items: center;
     }
     .doc-card h3 i { margin-right: 0.5rem; }
+
     .doc-card a {
       display: inline-block;
       margin-top: auto;
@@ -149,14 +141,14 @@
 
   <script>
     const docs = [
-      {"name":"Ändra lösenord åt annan användare i SF","file":"docs/A%CC%88ndra%20lo%CC%88senord%20a%CC%8At%20annan%20anva%CC%88ndare%20i%20SF.pdf","icon":"pdf"},
-      {"name":"Byt Lösenord Salesforce (Tekniker)","file":"docs/Byt%20Lo%CC%88senord%20Salesforce%20%28Tekniker%29.pdf","icon":"pdf"},
-      {"name":"Lämna över AO till arbetsledare UNA","file":"docs/La%CC%88mna%20o%CC%88ver%20AO%20till%20arbetsledare%20UNA.pdf","icon":"pdf"},
-      {"name":"Ominstallation App","file":"docs/Ominstallation%20App.pdf","icon":"pdf"},
-      {"name":"Rensa cachad metadata i SF-apparna","file":"docs/Rensa%20cachad%20metadata%20i%20SF-apparna.pdf","icon":"pdf"},
-      {"name":"Rutin Kreditering","file":"docs/Rutin%20Kreditering.docx","icon":"word"},
-      {"name":"Skapa AO","file":"docs/Skapa%20AO.docx","icon":"word"},
-      {"name":"Skapa kundportalsanvändare i SF","file":"docs/Skapa%20kundportalsanva%CC%88ndare%20i%20SF.pdf","icon":"pdf"}
+      {"name":"Ändra lösenord åt annan användare i SF","file":"docs/Ändra lösenord åt annan användare i SF.pdf","icon":"pdf"},
+      {"name":"Byt Lösenord Salesforce (Tekniker)","file":"docs/Byt Lösenord Salesforce (Tekniker).pdf","icon":"pdf"},
+      {"name":"Lämna över AO till arbetsledare UNA","file":"docs/Lämna över AO till arbetsledare UNA.pdf","icon":"pdf"},
+      {"name":"Ominstallation App","file":"docs/Ominstallation App.pdf","icon":"pdf"},
+      {"name":"Rensa cachad metadata i SF-apparna","file":"docs/Rensa cachad metadata i SF-apparna.pdf","icon":"pdf"},
+      {"name":"Rutin Kreditering","file":"docs/Rutin Kreditering.docx","icon":"word"},
+      {"name":"Skapa AO","file":"docs/Skapa AO.docx","icon":"word"},
+      {"name":"Skapa kundportalsanvändare i SF","file":"docs/Skapa kundportalsanvändare i SF.pdf","icon":"pdf"}
     ];
 
     document.addEventListener("DOMContentLoaded", () => {
@@ -164,8 +156,6 @@
 
       const renderDocs = (list) => {
         container.innerHTML = "";
-        container.classList.remove("flex-center");
-        
         list.forEach(doc => {
           const card = document.createElement("div");
           card.className = "doc-card";

@@ -14,7 +14,10 @@ jobs:
 
       - name: Lista filer i docs och sortera alfabetiskt
         run: |
-          find docs -maxdepth 1 -type f -print0 | sort -z > files.txt
+          echo "Filer i docs/ som hittas:"
+          find docs -maxdepth 1 -type f -print0 | sort -z | while IFS= read -r -d '' f; do
+            echo "$f"
+          done > files.txt
 
       - name: Generera docs-array med URL-encoding och filtyp
         run: |
@@ -34,10 +37,13 @@ jobs:
           done < files.txt
           ARRAY="${ARRAY%,}]"
           echo "ARRAY=$ARRAY" >> $GITHUB_ENV
+          echo "Docs-arrayen genererad:"
+          echo "$ARRAY"
 
       - name: Uppdatera dokument.html
         run: |
           sed -i '/const docs = \[/,/];/c\const docs = '"$ARRAY"';' dokument.html
+          echo "dokument.html uppdaterad med nya filer."
 
       - name: Commit & push
         run: |
@@ -45,4 +51,4 @@ jobs:
           git config --local user.name "GitHub Action"
           git add dokument.html
           git commit -m "Uppdaterad docs-array automatiskt med ikoner och sortering" || echo "Inga ändringar att commita"
-          git push
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/HissenInstruktionsfilmer/instruktionsfilmer.git HEAD:main

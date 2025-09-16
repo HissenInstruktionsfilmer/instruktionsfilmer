@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dokument</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    .container {
+      flex: 1;
+      max-width: 900px;
+      width: 100%;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    header {
+      width: 100%;
+      background: #495057;
+      color: white;
+      padding: 1rem 0;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    header nav a {
+      color: #ffd966;
+      text-decoration: none;
+      margin-left: 10px;
+      font-weight: bold;
+    }
+    header nav a:hover {
+      text-decoration: underline;
+    }
+
+    .search-wrapper {
+      text-align: center;
+      margin: 1rem 0;
+    }
+    #search-docs {
+      width: 100%;
+      max-width: 400px;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    .document-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .doc-card {
+      background: #fff;
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      height: 100%;
+    }
+    .doc-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .doc-card h3 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      color: #333;
+      display: flex;
+      align-items: center;
+    }
+    .doc-card h3 i {
+      margin-right: 0.5rem;
+    }
+    .doc-card p {
+      font-size: 0.9rem;
+      color: #555;
+    }
+    .doc-card a {
+      display: inline-block;
+      margin-top: auto; /* pushar knappen längst ner */
+      padding: 8px 12px;
+      border-radius: 6px;
+      background: #6696ff;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s;
+    }
+    .doc-card a:hover {
+      background: #5278cc;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #eee;
+      font-size: 14px;
+    }
+
+    @media (max-width: 500px) {
+      .document-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Dokument</h1>
+    <nav>
+      <a href="./">← Tillbaka till filmer</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="search-wrapper">
+      <input type="text" id="search-docs" placeholder="Sök dokument...">
+    </div>
+    <div class="document-grid"></div>
+  </div>
+
+  <footer>
+    2025 Instruktionsfilmer | <a href="https://hissen.se" target="_blank" rel="noopener noreferrer">Hissen AB</a>
+  </footer>
+
+  <script>
+    // Placeholder som Action kan ersätta automatiskt
+    const docs = [];
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.querySelector(".document-grid");
+
+      if (Array.isArray(docs) && docs.length > 0) {
+        docs.forEach(doc => {
+          const card = document.createElement("div");
+          card.className = "doc-card";
+
+          const icon = doc.icon ? doc.icon : "file-alt";
+          let iconColor = "#5278cc";
+          if(icon === "pdf") iconColor = "#cc2929";
+          else if(icon === "word") iconColor = "#2a5699";
+
+          const name = (doc.name || "").trim();
+          const desc = (doc.desc || "").trim();
+
+          card.innerHTML = `
+            <h3><i class="fas fa-${icon}" style="color:${iconColor}"></i> ${name}</h3>
+            <p>${desc}</p>
+            <a href="${doc.file}" target="_blank" rel="noopener noreferrer">Öppna</a>
+          `;
+
+          container.appendChild(card);
+        });
+      } else {
+        container.innerHTML = "<p>Inga dokument hittades.</p>";
+      }
+
+      // ===== Sökfunktion =====
+      const searchInput = document.getElementById("search-docs");
+      searchInput.addEventListener("input", () => {
+        const val = searchInput.value.trim().toLowerCase();
+        document.querySelectorAll(".doc-card").forEach(card => {
+          const title = card.querySelector("h3").textContent.toLowerCase();
+          const desc = card.querySelector("p").textContent.toLowerCase();
+          card.style.display = (title.includes(val) || desc.includes(val)) ? "flex" : "none";
+        });
+      });
+    });
+  </script>
+
+</body>
+</html>

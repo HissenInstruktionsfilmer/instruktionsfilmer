@@ -36,7 +36,8 @@ jobs:
 
       - name: Uppdatera dokument.html
         run: |
-          sed -i 's|const docs = \[\];|const docs = '"$ARRAY"';|' dokument.html
+          # Ersätt hela docs-arrayen oavsett innehåll
+          sed -i 's|const docs = \[.*\];|const docs = '"$ARRAY"';|' dokument.html
           echo "dokument.html uppdaterad med nya filer."
 
       - name: Skapa Pull Request
@@ -48,3 +49,4 @@ jobs:
           base: main
           title: "Uppdatera docs"
           body: "Denna PR uppdaterar docs-array automatiskt med ikoner och sortering."
+          allow-empty: true

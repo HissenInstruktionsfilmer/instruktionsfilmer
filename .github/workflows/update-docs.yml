@@ -9,13 +9,11 @@ jobs:
   update-docs:
     runs-on: ubuntu-latest
     steps:
-      # Steg 1: Hämta repo utan att använda standardtoken för push
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
           persist-credentials: false
 
-      # Steg 2: Lista filer i docs/ och sortera
       - name: Lista filer i docs och sortera alfabetiskt
         run: |
           echo "Filer i docs/ som hittas:"
@@ -23,8 +21,7 @@ jobs:
             echo "$f"
           done > files.txt
 
-      # Steg 3: Generera docs-array med URL-encoding och filtyp
-      - name: Generera docs-array
+      - name: Generera docs-array med URL-encoding och filtyp
         run: |
           ARRAY="["
           while IFS= read -r -d '' f; do
@@ -40,22 +37,32 @@ jobs:
           done < files.txt
           ARRAY="${ARRAY%,}]"
           echo "ARRAY=$ARRAY" >> $GITHUB_ENV
-          echo "Docs-array genererad:"
+          echo "Docs-arrayen genererad:"
           echo "$ARRAY"
 
-      # Steg 4: Uppdatera dokument.html
       - name: Uppdatera dokument.html
         run: |
           sed -i '/const docs = \[/,/];/c\const docs = '"$ARRAY"';' dokument.html
           echo "dokument.html uppdaterad med nya filer."
 
-      # Steg 5: Commit & push
-      - name: Commit & push
+      - name: Skapa tillfällig branch och commit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          BRANCH_NAME="update-docs-$(date +%s)"
+          git checkout -b $BRANCH_NAME
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
           git add dokument.html
-          git commit -m "Uppdaterad docs-array automatiskt med ikoner och sortering" || echo "Inga ändringar att commita"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/HissenInstruktionsfilmer/instruktionsfilmer.git HEAD:main
+          git commit -m "Uppdaterad docs-array automatiskt med ikoner och sortering"
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git $BRANCH_NAME
+
+      - name: Skapa Pull Request
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Uppdaterad docs-array automatiskt med ikoner och sortering"
+          branch: "update-docs-branch"
+          base: "main"
+          title: "Automatisk uppdatering av dokumentlista"
+          body: "GitHub Action uppdaterade dokument.html med nya filer från /docs"

@@ -8,11 +8,12 @@ on:
 jobs:
   update-docs:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
-          persist-credentials: false
+          persist-credentials: false  # Viktigt för att kunna pusha med token
 
       - name: Lista filer i docs och sortera alfabetiskt
         run: |
@@ -40,29 +41,23 @@ jobs:
           echo "Docs-arrayen genererad:"
           echo "$ARRAY"
 
+      - name: Skapa separat branch
+        run: |
+          BRANCH_NAME="update-docs-$(date +%s)"
+          echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
+          git checkout -b $BRANCH_NAME
+
       - name: Uppdatera dokument.html
         run: |
           sed -i '/const docs = \[/,/];/c\const docs = '"$ARRAY"';' dokument.html
           echo "dokument.html uppdaterad med nya filer."
 
-      - name: Skapa tillfällig branch och commit
+      - name: Commit & push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BRANCH_NAME="update-docs-$(date +%s)"
-          git checkout -b $BRANCH_NAME
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
           git add dokument.html
-          git commit -m "Uppdaterad docs-array automatiskt med ikoner och sortering"
-          git push https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git $BRANCH_NAME
-
-      - name: Skapa Pull Request
-        uses: peter-evans/create-pull-request@v5
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Uppdaterad docs-array automatiskt med ikoner och sortering"
-          branch: "update-docs-branch"
-          base: "main"
-          title: "Automatisk uppdatering av dokumentlista"
-          body: "GitHub Action uppdaterade dokument.html med nya filer från /docs"
+          git commit -m "Uppdaterad docs-array automatiskt med ikoner och sortering" || echo "Inga ändringar att commita"
+          git push --set-upstream https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }} $BRANCH_NAME

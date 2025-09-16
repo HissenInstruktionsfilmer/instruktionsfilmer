@@ -183,11 +183,6 @@
           `;
           container.appendChild(card);
         });
-
-        // Om endast ett dokument → centrerar horisontellt
-        if(list.length === 1){
-          container.classList.add("flex-center");
-        }
       };
 
       renderDocs(docs);

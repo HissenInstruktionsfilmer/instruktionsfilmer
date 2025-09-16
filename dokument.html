@@ -15,7 +15,6 @@
       flex-direction: column;
       min-height: 100vh;
     }
-
     header {
       width: 100%;
       background: #495057;
@@ -27,8 +26,16 @@
       top: 0;
       z-index: 100;
     }
-    header h1 { margin: 0; font-size: 1.5rem; }
-    header nav a { color: #ffd966; text-decoration: none; margin-left: 10px; font-weight: bold; }
+    header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    header nav a {
+      color: #ffd966;
+      text-decoration: none;
+      margin-left: 10px;
+      font-weight: bold;
+    }
     header nav a:hover { text-decoration: underline; }
 
     .container {
@@ -37,9 +44,6 @@
       width: 100%;
       margin: 2rem auto 3rem;
       padding: 0.1rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
     }
 
     .search-wrapper {
@@ -59,11 +63,10 @@
 
     .document-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, 250px);
-      gap: 3rem 3rem;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 2rem;
       justify-content: start;
       width: 100%;
-      grid-auto-rows: 1fr;
     }
 
     .doc-card {
@@ -74,7 +77,7 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      width: 250px;
+      width: 100%;
       height: 100%;
       transition: transform 0.2s, box-shadow 0.2s;
     }
@@ -82,16 +85,16 @@
       transform: translateY(-3px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-
     .doc-card h3 {
-      margin: 0;
+      margin: 0 0 1rem 0;
       font-size: 1.1rem;
       color: #333;
       display: flex;
       align-items: center;
     }
-    .doc-card h3 i { margin-right: 0.5rem; }
-
+    .doc-card h3 i {
+      margin-right: 0.5rem;
+    }
     .doc-card a {
       display: inline-block;
       margin-top: auto;
@@ -140,15 +143,9 @@
   </footer>
 
   <script>
+    // Docs-arrayen fylls automatiskt av GitHub Action
     const docs = [
-      {"name":"Ändra lösenord åt annan användare i SF","file":"docs/Ändra lösenord åt annan användare i SF.pdf","icon":"pdf"},
-      {"name":"Byt Lösenord Salesforce (Tekniker)","file":"docs/Byt Lösenord Salesforce (Tekniker).pdf","icon":"pdf"},
-      {"name":"Lämna över AO till arbetsledare UNA","file":"docs/Lämna över AO till arbetsledare UNA.pdf","icon":"pdf"},
-      {"name":"Ominstallation App","file":"docs/Ominstallation App.pdf","icon":"pdf"},
-      {"name":"Rensa cachad metadata i SF-apparna","file":"docs/Rensa cachad metadata i SF-apparna.pdf","icon":"pdf"},
-      {"name":"Rutin Kreditering","file":"docs/Rutin Kreditering.docx","icon":"word"},
-      {"name":"Skapa AO","file":"docs/Skapa AO.docx","icon":"word"},
-      {"name":"Skapa kundportalsanvändare i SF","file":"docs/Skapa kundportalsanvändare i SF.pdf","icon":"pdf"}
+      /* Action fyller här automatiskt */
     ];
 
     document.addEventListener("DOMContentLoaded", () => {

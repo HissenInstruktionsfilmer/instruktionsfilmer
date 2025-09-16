@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false  # Viktigt! annars försöker checkout använda token som inte kan pusha
 
       - name: Lista filer i docs och sortera alfabetiskt
         run: |
@@ -28,9 +30,7 @@ jobs:
             DESC="Kort beskrivning av $NAME"
             EXT="${FILE_NAME##*.}"
             ICON="$([ "$EXT" = "pdf" ] && echo "pdf" || ([ "$EXT" = "docx" ] || [ "$EXT" = "doc" ] && echo "word" || echo "file"))"
-            # URL-encode filväg
             FILE_ENCODED=$(python3 -c "import urllib.parse; print(urllib.parse.quote('''$f'''))")
-            # Escape quotes/backslashes för JSON
             NAME_ESCAPED=$(echo "$NAME" | sed 's/\\/\\\\/g; s/"/\\"/g')
             DESC_ESCAPED=$(echo "$DESC" | sed 's/\\/\\\\/g; s/"/\\"/g')
             ARRAY+="{\"name\":\"$NAME_ESCAPED\",\"desc\":\"$DESC_ESCAPED\",\"file\":\"$FILE_ENCODED\",\"icon\":\"$ICON\"},"
@@ -46,9 +46,11 @@ jobs:
           echo "dokument.html uppdaterad med nya filer."
 
       - name: Commit & push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add dokument.html
           git commit -m "Uppdaterad docs-array automatiskt med ikoner och sortering" || echo "Inga ändringar att commita"
-          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/HissenInstruktionsfilmer/instruktionsfilmer.git HEAD:main
+          git push https://x-access-token:${GITHUB_TOKEN}@github.com/HissenInstruktionsfilmer/instruktionsfilmer.git HEAD:main

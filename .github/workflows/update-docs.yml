@@ -9,11 +9,13 @@ jobs:
   update-docs:
     runs-on: ubuntu-latest
     steps:
+      # Steg 1: Hämta repo utan att använda standardtoken för push
       - name: Checkout repo
         uses: actions/checkout@v3
         with:
-          persist-credentials: false  # Viktigt! annars försöker checkout använda token som inte kan pusha
+          persist-credentials: false
 
+      # Steg 2: Lista filer i docs/ och sortera
       - name: Lista filer i docs och sortera alfabetiskt
         run: |
           echo "Filer i docs/ som hittas:"
@@ -21,7 +23,8 @@ jobs:
             echo "$f"
           done > files.txt
 
-      - name: Generera docs-array med URL-encoding och filtyp
+      # Steg 3: Generera docs-array med URL-encoding och filtyp
+      - name: Generera docs-array
         run: |
           ARRAY="["
           while IFS= read -r -d '' f; do
@@ -37,14 +40,16 @@ jobs:
           done < files.txt
           ARRAY="${ARRAY%,}]"
           echo "ARRAY=$ARRAY" >> $GITHUB_ENV
-          echo "Docs-arrayen genererad:"
+          echo "Docs-array genererad:"
           echo "$ARRAY"
 
+      # Steg 4: Uppdatera dokument.html
       - name: Uppdatera dokument.html
         run: |
           sed -i '/const docs = \[/,/];/c\const docs = '"$ARRAY"';' dokument.html
           echo "dokument.html uppdaterad med nya filer."
 
+      # Steg 5: Commit & push
       - name: Commit & push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

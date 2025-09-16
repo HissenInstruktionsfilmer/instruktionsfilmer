@@ -15,13 +15,6 @@
       flex-direction: column;
       min-height: 100vh;
     }
-    .container {
-      flex: 1;
-      max-width: 900px;
-      width: 100%;
-      margin: 2rem auto;
-      padding: 0 1rem;
-    }
     header {
       width: 100%;
       background: #495057;
@@ -33,23 +26,30 @@
       top: 0;
       z-index: 100;
     }
-    header h1 {
-      margin: 0;
-      font-size: 1.5rem;
-    }
+    header h1 { margin: 0; font-size: 1.5rem; }
     header nav a {
       color: #ffd966;
       text-decoration: none;
       margin-left: 10px;
       font-weight: bold;
     }
-    header nav a:hover {
-      text-decoration: underline;
+    header nav a:hover { text-decoration: underline; }
+
+    .container {
+      flex: 1;
+      max-width: 1000px;
+      width: 100%;
+      margin: 2rem auto 3rem;
+      padding: 0.1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .search-wrapper {
+      width: 100%;
       text-align: center;
-      margin: 1rem 0;
+      margin-bottom: 1.5rem;
     }
     #search-docs {
       width: 100%;
@@ -63,42 +63,46 @@
 
     .document-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1rem;
-      margin-top: 1rem;
+      grid-template-columns: repeat(auto-fill, 250px);
+      gap: 3rem 3rem;
+      width: 100%;
+      grid-auto-rows: 1fr;
+      grid-auto-flow: dense;
+      justify-content: start; /* default */
     }
+
+    .document-grid.flex-center {
+      display: flex;
+      justify-content: center;
+    }
+
     .doc-card {
       background: #fff;
       border-radius: 8px;
       padding: 1rem;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+      width: 250px;
       height: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
     .doc-card:hover {
       transform: translateY(-3px);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .doc-card h3 {
-      margin-top: 0;
+      margin: 0;
       font-size: 1.1rem;
       color: #333;
       display: flex;
       align-items: center;
     }
-    .doc-card h3 i {
-      margin-right: 0.5rem;
-    }
-    .doc-card p {
-      font-size: 0.9rem;
-      color: #555;
-    }
+    .doc-card h3 i { margin-right: 0.5rem; }
     .doc-card a {
       display: inline-block;
-      margin-top: auto; /* pushar knappen längst ner */
+      margin-top: auto;
       padding: 8px 12px;
       border-radius: 6px;
       background: #6696ff;
@@ -106,21 +110,20 @@
       text-decoration: none;
       font-weight: bold;
       transition: background 0.3s;
+      text-align: center;
     }
-    .doc-card a:hover {
-      background: #5278cc;
-    }
+    .doc-card a:hover { background: #5278cc; }
+
     footer {
       text-align: center;
       padding: 1rem;
       background: #eee;
       font-size: 14px;
+      width: 100%;
     }
 
     @media (max-width: 500px) {
-      .document-grid {
-        grid-template-columns: 1fr;
-      }
+      .document-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -145,46 +148,55 @@
   </footer>
 
   <script>
-    // Placeholder som Action kan ersätta automatiskt
-    const docs = [{"name":"Ändra lösenord åt annan användare i SF","desc":"Kort beskrivning av Ändra lösenord åt annan användare i SF","file":"docs/A%CC%88ndra%20lo%CC%88senord%20a%CC%8At%20annan%20anva%CC%88ndare%20i%20SF.pdf","icon":"pdf"},{"name":"Byt Lösenord Salesforce (Tekniker)","desc":"Kort beskrivning av Byt Lösenord Salesforce (Tekniker)","file":"docs/Byt%20Lo%CC%88senord%20Salesforce%20%28Tekniker%29.pdf","icon":"pdf"},{"name":"Lämna över AO till arbetsledare UNA","desc":"Kort beskrivning av Lämna över AO till arbetsledare UNA","file":"docs/La%CC%88mna%20o%CC%88ver%20AO%20till%20arbetsledare%20UNA.pdf","icon":"pdf"},{"name":"Ominstallation App","desc":"Kort beskrivning av Ominstallation App","file":"docs/Ominstallation%20App.pdf","icon":"pdf"},{"name":"Rensa cachad metadata i SF-apparna","desc":"Kort beskrivning av Rensa cachad metadata i SF-apparna","file":"docs/Rensa%20cachad%20metadata%20i%20SF-apparna.pdf","icon":"pdf"},{"name":"Rutin Kreditering","desc":"Kort beskrivning av Rutin Kreditering","file":"docs/Rutin%20Kreditering.docx","icon":"word"},{"name":"Skapa AO","desc":"Kort beskrivning av Skapa AO","file":"docs/Skapa%20AO.docx","icon":"word"},{"name":"Skapa kundportalsanvändare i SF","desc":"Kort beskrivning av Skapa kundportalsanvändare i SF","file":"docs/Skapa%20kundportalsanva%CC%88ndare%20i%20SF.pdf","icon":"pdf"}];
+    const docs = [
+      {"name":"Ändra lösenord åt annan användare i SF","file":"docs/A%CC%88ndra%20lo%CC%88senord%20a%CC%8At%20annan%20anva%CC%88ndare%20i%20SF.pdf","icon":"pdf"},
+      {"name":"Byt Lösenord Salesforce (Tekniker)","file":"docs/Byt%20Lo%CC%88senord%20Salesforce%20%28Tekniker%29.pdf","icon":"pdf"},
+      {"name":"Lämna över AO till arbetsledare UNA","file":"docs/La%CC%88mna%20o%CC%88ver%20AO%20till%20arbetsledare%20UNA.pdf","icon":"pdf"},
+      {"name":"Ominstallation App","file":"docs/Ominstallation%20App.pdf","icon":"pdf"},
+      {"name":"Rensa cachad metadata i SF-apparna","file":"docs/Rensa%20cachad%20metadata%20i%20SF-apparna.pdf","icon":"pdf"},
+      {"name":"Rutin Kreditering","file":"docs/Rutin%20Kreditering.docx","icon":"word"},
+      {"name":"Skapa AO","file":"docs/Skapa%20AO.docx","icon":"word"},
+      {"name":"Skapa kundportalsanvändare i SF","file":"docs/Skapa%20kundportalsanva%CC%88ndare%20i%20SF.pdf","icon":"pdf"}
+    ];
 
     document.addEventListener("DOMContentLoaded", () => {
       const container = document.querySelector(".document-grid");
 
-      if (Array.isArray(docs) && docs.length > 0) {
-        docs.forEach(doc => {
+      const renderDocs = (list) => {
+        container.innerHTML = "";
+        container.classList.remove("flex-center");
+        
+        list.forEach(doc => {
           const card = document.createElement("div");
           card.className = "doc-card";
 
-          const icon = doc.icon ? doc.icon : "file-alt";
+          const icon = doc.icon || "file-alt";
           let iconColor = "#5278cc";
           if(icon === "pdf") iconColor = "#cc2929";
           else if(icon === "word") iconColor = "#2a5699";
 
           const name = (doc.name || "").trim();
-          const desc = (doc.desc || "").trim();
 
           card.innerHTML = `
             <h3><i class="fas fa-${icon}" style="color:${iconColor}"></i> ${name}</h3>
-            <p>${desc}</p>
             <a href="${doc.file}" target="_blank" rel="noopener noreferrer">Öppna</a>
           `;
-
           container.appendChild(card);
         });
-      } else {
-        container.innerHTML = "<p>Inga dokument hittades.</p>";
-      }
 
-      // ===== Sökfunktion =====
+        // Om endast ett dokument → centrerar horisontellt
+        if(list.length === 1){
+          container.classList.add("flex-center");
+        }
+      };
+
+      renderDocs(docs);
+
       const searchInput = document.getElementById("search-docs");
       searchInput.addEventListener("input", () => {
         const val = searchInput.value.trim().toLowerCase();
-        document.querySelectorAll(".doc-card").forEach(card => {
-          const title = card.querySelector("h3").textContent.toLowerCase();
-          const desc = card.querySelector("p").textContent.toLowerCase();
-          card.style.display = (title.includes(val) || desc.includes(val)) ? "flex" : "none";
-        });
+        const filtered = docs.filter(d => d.name.toLowerCase().includes(val));
+        renderDocs(filtered);
       });
     });
   </script>

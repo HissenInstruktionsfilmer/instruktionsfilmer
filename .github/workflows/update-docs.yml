@@ -13,11 +13,12 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      - name: Lista filer i docs och sortera alfabetiskt
+      - name: Lista alla filer i /docs
         run: |
+          # Hämta alla filer, sortera alfabetiskt
           find docs -maxdepth 1 -type f -print0 | sort -z > files.txt
 
-      - name: Generera docs-array med URL-encoding och filtyp
+      - name: Generera docs-array med alla filer
         run: |
           ARRAY=""
           while IFS= read -r -d '' f; do
@@ -30,7 +31,7 @@ jobs:
             ARRAY+="{\"name\":\"$NAME_ESCAPED\",\"file\":\"$FILE_ENCODED\",\"icon\":\"$ICON\"},"
           done < files.txt
 
-          # Ta bort sista kommatecknet – behåll bara arrayen direkt
+          # Ta bort sista kommatecknet
           ARRAY="${ARRAY%,}"
           echo "ARRAY=$ARRAY" >> $GITHUB_ENV
 
@@ -42,7 +43,7 @@ jobs:
             !skip
           ' dokument.html > tmp.html
           mv tmp.html dokument.html
-          echo "dokument.html uppdaterad med nya filer:"
+          echo "dokument.html uppdaterad med alla filer:"
           grep "AUTO-GENERATED" -A 1 dokument.html
 
       - name: Commit changes
@@ -60,5 +61,5 @@ jobs:
           branch: update-docs
           base: main
           title: "Uppdatera docs"
-          body: "Denna PR uppdaterar docs-array automatiskt med ikoner och sortering."
+          body: "Denna PR uppdaterar docs-array automatiskt med alla filer i /docs."
           allow-empty: true

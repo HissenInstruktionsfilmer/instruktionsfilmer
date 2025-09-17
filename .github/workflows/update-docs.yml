@@ -29,7 +29,9 @@ jobs:
             NAME_ESCAPED=$(echo "$NAME" | sed 's/\\/\\\\/g; s/"/\\"/g')
             ARRAY+="{\"name\":\"$NAME_ESCAPED\",\"file\":\"$FILE_ENCODED\",\"icon\":\"$ICON\"},"
           done < files.txt
-          ARRAY="[${ARRAY%,}]"
+
+          # Ta bort sista kommatecknet – behåll bara arrayen direkt
+          ARRAY="${ARRAY%,}"
           echo "ARRAY=$ARRAY" >> $GITHUB_ENV
 
       - name: Uppdatera dokument.html
@@ -58,5 +60,5 @@ jobs:
           branch: update-docs
           base: main
           title: "Uppdatera docs"
-          body: "Auto PR för docs"
+          body: "Denna PR uppdaterar docs-array automatiskt med ikoner och sortering."
           allow-empty: true
